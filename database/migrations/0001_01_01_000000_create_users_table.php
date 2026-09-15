@@ -7,43 +7,43 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * File ini menggantikan migration users bawaan Laravel.
+     * Timpa langsung file 0001_01_01_000000_create_users_table.php
+     * yang sudah ada di project kamu dengan isi ini.
      */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->enum('role', ['masyarakat', 'petugas', 'dinas']);
+            $table->string('nama_lengkap', 100);
+
+            // dipakai oleh masyarakat
+            $table->string('username', 50)->unique()->nullable();
+            $table->string('email', 100)->unique()->nullable();
+
+            // dipakai oleh petugas & dinas
+            $table->string('nip', 20)->unique()->nullable();
+
             $table->string('password');
+            $table->string('kontak', 20)->nullable();
+
+            // khusus petugas
+            $table->string('wilayah_tugas', 50)->nullable();
+
+            // khusus dinas
+            $table->string('jabatan', 80)->nullable();
+
+            $table->enum('status', ['aktif', 'bertugas', 'cuti', 'nonaktif'])->default('aktif');
+            $table->string('foto_url')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });
-
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
-
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
-        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
     }
 };
