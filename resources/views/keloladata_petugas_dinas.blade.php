@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EcoTrack - Kelola Laporan Masyarakat</title>
+<title>EcoTrack - Data Petugas</title>
 <style>
   * {
     margin: 0;
@@ -250,6 +250,38 @@
     stroke-width: 2;
   }
 
+  /* STAT CARDS */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .stat-value.green { color: #16a34a; }
+  .stat-value.blue { color: #2563eb; }
+  .stat-value.orange { color: #ea580c; }
+  .stat-value.gray { color: #6b7280; }
+
+  .stat-title {
+    font-size: 0.82rem;
+    color: #6b7280;
+    font-weight: 600;
+  }
+
   /* FILTER BAR */
   .filter-bar {
     display: flex;
@@ -320,6 +352,30 @@
     pointer-events: none;
   }
 
+  .btn-new {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #0f5c3f;
+    color: #ffffff;
+    border: none;
+    border-radius: 9px;
+    padding: 0 20px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .btn-new:hover {
+    background: #0c4a33;
+  }
+
+  .btn-new svg {
+    width: 15px;
+    height: 15px;
+  }
+
   /* TABLE */
   .table-card {
     background: #ffffff;
@@ -351,7 +407,7 @@
     font-size: 0.86rem;
     color: #374151;
     border-bottom: 1px solid #f1f2f4;
-    vertical-align: top;
+    vertical-align: middle;
   }
 
   tbody tr:last-child td {
@@ -362,33 +418,56 @@
     background: #fafffc;
   }
 
-  .id-cell {
-    font-weight: 700;
+  .petugas-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+  }
+
+  .petugas-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #e5f7ee;
     color: #0f7a4e;
-    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
   }
 
-  .date-cell {
+  .petugas-name {
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .petugas-role {
+    font-size: 0.76rem;
+    color: #9ca3af;
+  }
+
+  .nip-cell {
     color: #6b7280;
     white-space: nowrap;
   }
 
-  .pelapor-cell {
+  .wilayah-cell {
     font-weight: 600;
     color: #111827;
     white-space: nowrap;
   }
 
-  .lokasi-cell {
-    font-weight: 600;
-    color: #111827;
+  .kontak-cell {
+    color: #6b7280;
     white-space: nowrap;
   }
 
-  .desc-cell {
-    max-width: 260px;
+  .kendaraan-cell {
     color: #6b7280;
-    line-height: 1.4;
+    white-space: nowrap;
   }
 
   .status-pill {
@@ -410,50 +489,44 @@
     flex-shrink: 0;
   }
 
-  .status-dijadwalkan {
-    color: #2563eb;
-    background: #eaf1fe;
-  }
-  .status-dijadwalkan::before { background: #2563eb; }
-
-  .status-menunggu {
-    color: #6b7280;
-    background: #f1f2f4;
-  }
-  .status-menunggu::before { background: #9ca3af; }
-
-  .status-selesai {
+  .status-aktif {
     color: #16a34a;
     background: #eafcf1;
   }
-  .status-selesai::before { background: #16a34a; }
+  .status-aktif::before { background: #16a34a; }
 
-  .action-btn {
-    border: none;
-    border-radius: 7px;
-    padding: 8px 16px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    cursor: pointer;
+  .status-bertugas {
+    color: #2563eb;
+    background: #eaf1fe;
+  }
+  .status-bertugas::before { background: #2563eb; }
+
+  .status-cuti {
+    color: #ea580c;
+    background: #fff2e8;
+  }
+  .status-cuti::before { background: #ea580c; }
+
+  .status-nonaktif {
+    color: #6b7280;
+    background: #f1f2f4;
+  }
+  .status-nonaktif::before { background: #9ca3af; }
+
+  .detail-link {
+    color: #0f7a4e;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.85rem;
     white-space: nowrap;
   }
 
-  .action-btn.validasi {
-    background: #f5a623;
-    color: #ffffff;
+  .detail-link:hover {
+    text-decoration: underline;
   }
-  .action-btn.validasi:hover { background: #e0941a; }
 
-  .action-btn.jadwalkan {
-    background: #0f5c3f;
-    color: #ffffff;
-  }
-  .action-btn.jadwalkan:hover { background: #0c4a33; }
-
-  .done-label {
-    color: #16a34a;
-    font-weight: 700;
-    font-size: 0.82rem;
+  @media (max-width: 960px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
   }
 
   @media (max-width: 760px) {
@@ -489,7 +562,7 @@
         </a>
       </li>
       <li>
-        <a href="#" class="nav-item active">
+        <a href="kelola-laporan-ecotrack.html" class="nav-item">
           <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
           Laporan Masuk
           <span class="nav-badge">3</span>
@@ -502,7 +575,7 @@
         </a>
       </li>
       <li>
-        <a href="data-petugas-ecotrack.html" class="nav-item">
+        <a href="#" class="nav-item active">
           <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           Data Petugas
         </a>
@@ -524,8 +597,8 @@
 
     <div class="topbar">
       <div class="topbar-title">
-        <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-6 4 4 5-8"/></svg>
-        Kelola Laporan Masyarakat
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Data Petugas
       </div>
       <div class="topbar-right">
         <div class="date-chip">
@@ -539,21 +612,46 @@
       </div>
     </div>
 
+    <!-- STAT CARDS -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-value blue">8</div>
+        <div class="stat-title">Total Petugas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value green">3</div>
+        <div class="stat-title">Sedang Bertugas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value orange">1</div>
+        <div class="stat-title">Cuti</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value gray">1</div>
+        <div class="stat-title">Nonaktif</div>
+      </div>
+    </div>
+
     <!-- FILTER -->
     <div class="filter-bar">
       <div class="search-box">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="text" id="searchInput" placeholder="Cari berdasarkan TPS atau nama pelapor...">
+        <input type="text" id="searchInput" placeholder="Cari berdasarkan nama atau NIP...">
       </div>
       <div class="status-select">
         <select id="statusFilter">
           <option value="semua">Semua Status</option>
-          <option value="menunggu">Menunggu</option>
-          <option value="dijadwalkan">Dijadwalkan</option>
-          <option value="selesai">Selesai</option>
+          <option value="aktif">Aktif</option>
+          <option value="bertugas">Sedang Bertugas</option>
+          <option value="cuti">Cuti</option>
+          <option value="nonaktif">Nonaktif</option>
         </select>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
       </div>
+      <button class="btn-new">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Tambah Petugas
+      </button>
     </div>
 
     <!-- TABLE -->
@@ -561,69 +659,117 @@
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Tanggal</th>
-            <th>Pelapor</th>
-            <th>Lokasi TPS</th>
-            <th>Deskripsi</th>
+            <th>Petugas</th>
+            <th>NIP</th>
+            <th>Wilayah Tugas</th>
+            <th>Kontak</th>
+            <th>Kendaraan</th>
             <th>Status</th>
             <th>Tindakan</th>
           </tr>
         </thead>
-        <tbody id="reportTableBody">
-          <tr data-status="dijadwalkan" data-search="rpt001 budi santoso tps taman kota">
-            <td class="id-cell">RPT001</td>
-            <td class="date-cell">2026-05-31 14:20</td>
-            <td class="pelapor-cell">Budi Santoso</td>
-            <td class="lokasi-cell">TPS Taman Kota</td>
-            <td class="desc-cell">Sampah menumpuk dan berbau tidak sedap, sudah 2 hari belum...</td>
-            <td><span class="status-pill status-dijadwalkan">Dijadwalkan</span></td>
-            <td><button class="action-btn validasi">Validasi</button></td>
+        <tbody id="petugasTableBody">
+          <tr data-status="bertugas" data-search="agus widodo 19870512001 kartoharjo">
+            <td>
+              <div class="petugas-cell">
+                <span class="petugas-avatar">A</span>
+                <div>
+                  <div class="petugas-name">Agus Widodo</div>
+                  <div class="petugas-role">Petugas Lapangan</div>
+                </div>
+              </div>
+            </td>
+            <td class="nip-cell">19870512001</td>
+            <td class="wilayah-cell">Kartoharjo</td>
+            <td class="kontak-cell">0812-3456-7801</td>
+            <td class="kendaraan-cell">Truk B 9012 KA</td>
+            <td><span class="status-pill status-bertugas">Sedang Bertugas</span></td>
+            <td><a href="#" class="detail-link">Detail ›</a></td>
           </tr>
-          <tr data-status="menunggu" data-search="rpt002 budi santoso tps nambangan">
-            <td class="id-cell">RPT002</td>
-            <td class="date-cell">2026-06-01 07:45</td>
-            <td class="pelapor-cell">Budi Santoso</td>
-            <td class="lokasi-cell">TPS Nambangan</td>
-            <td class="desc-cell">TPS penuh total, sampah meluber ke jalan dan mengganggu pejalan...</td>
-            <td><span class="status-pill status-menunggu">Menunggu</span></td>
-            <td><button class="action-btn jadwalkan">Jadwalkan</button></td>
+          <tr data-status="bertugas" data-search="dedi kurniawan 19900823002 manguharjo">
+            <td>
+              <div class="petugas-cell">
+                <span class="petugas-avatar">D</span>
+                <div>
+                  <div class="petugas-name">Dedi Kurniawan</div>
+                  <div class="petugas-role">Petugas Lapangan</div>
+                </div>
+              </div>
+            </td>
+            <td class="nip-cell">19900823002</td>
+            <td class="wilayah-cell">Manguharjo</td>
+            <td class="kontak-cell">0813-2211-9087</td>
+            <td class="kendaraan-cell">Truk B 4471 AB</td>
+            <td><span class="status-pill status-bertugas">Sedang Bertugas</span></td>
+            <td><a href="#" class="detail-link">Detail ›</a></td>
           </tr>
-          <tr data-status="menunggu" data-search="rpt005 siti rahayu tps nambangan">
-            <td class="id-cell">RPT005</td>
-            <td class="date-cell">2026-06-01 09:30</td>
-            <td class="pelapor-cell">Siti Rahayu</td>
-            <td class="lokasi-cell">TPS Nambangan</td>
-            <td class="desc-cell">TPS penuh dan meluber ke jalan masuk perumahan. Perlu...</td>
-            <td><span class="status-pill status-menunggu">Menunggu</span></td>
-            <td><button class="action-btn jadwalkan">Jadwalkan</button></td>
+          <tr data-status="aktif" data-search="rina wulandari 19921107003 taman">
+            <td>
+              <div class="petugas-cell">
+                <span class="petugas-avatar">R</span>
+                <div>
+                  <div class="petugas-name">Rina Wulandari</div>
+                  <div class="petugas-role">Petugas Lapangan</div>
+                </div>
+              </div>
+            </td>
+            <td class="nip-cell">19921107003</td>
+            <td class="wilayah-cell">Taman</td>
+            <td class="kontak-cell">0857-6634-2210</td>
+            <td class="kendaraan-cell">Truk B 7723 CD</td>
+            <td><span class="status-pill status-bertugas">Sedang Bertugas</span></td>
+            <td><a href="#" class="detail-link">Detail ›</a></td>
           </tr>
-          <tr data-status="menunggu" data-search="rpt006 siti rahayu tps oro-oro ombo">
-            <td class="id-cell">RPT006</td>
-            <td class="date-cell">2026-06-01 10:15</td>
-            <td class="pelapor-cell">Siti Rahayu</td>
-            <td class="lokasi-cell">TPS Oro-Oro Ombo</td>
-            <td class="desc-cell">Sampah organik mulai membusuk, perlu segera diangkut.</td>
-            <td><span class="status-pill status-menunggu">Menunggu</span></td>
-            <td><button class="action-btn jadwalkan">Jadwalkan</button></td>
+          <tr data-status="aktif" data-search="bambang setiawan 19880314004 kartoharjo">
+            <td>
+              <div class="petugas-cell">
+                <span class="petugas-avatar">B</span>
+                <div>
+                  <div class="petugas-name">Bambang Setiawan</div>
+                  <div class="petugas-role">Petugas Lapangan</div>
+                </div>
+              </div>
+            </td>
+            <td class="nip-cell">19880314004</td>
+            <td class="wilayah-cell">Kartoharjo</td>
+            <td class="kontak-cell">0821-4432-6650</td>
+            <td class="kendaraan-cell">Truk B 2290 EF</td>
+            <td><span class="status-pill status-aktif">Aktif</span></td>
+            <td><a href="#" class="detail-link">Detail ›</a></td>
           </tr>
-          <tr data-status="dijadwalkan" data-search="rpt007 siti rahayu tps pasar besar">
-            <td class="id-cell">RPT007</td>
-            <td class="date-cell">2026-05-30 08:00</td>
-            <td class="pelapor-cell">Siti Rahayu</td>
-            <td class="lokasi-cell">TPS Pasar Besar</td>
-            <td class="desc-cell">Volume sampah naik signifikan pasca hari raya.</td>
-            <td><span class="status-pill status-dijadwalkan">Dijadwalkan</span></td>
-            <td><button class="action-btn validasi">Validasi</button></td>
+          <tr data-status="cuti" data-search="yuli astuti 19950602005 manguharjo">
+            <td>
+              <div class="petugas-cell">
+                <span class="petugas-avatar">Y</span>
+                <div>
+                  <div class="petugas-name">Yuli Astuti</div>
+                  <div class="petugas-role">Petugas Lapangan</div>
+                </div>
+              </div>
+            </td>
+            <td class="nip-cell">19950602005</td>
+            <td class="wilayah-cell">Manguharjo</td>
+            <td class="kontak-cell">0878-1123-4590</td>
+            <td class="kendaraan-cell">-</td>
+            <td><span class="status-pill status-cuti">Cuti</span></td>
+            <td><a href="#" class="detail-link">Detail ›</a></td>
           </tr>
-          <tr data-status="selesai" data-search="rpt003 budi santoso tps pasar besar">
-            <td class="id-cell">RPT003</td>
-            <td class="date-cell">2026-05-28 10:00</td>
-            <td class="pelapor-cell">Budi Santoso</td>
-            <td class="lokasi-cell">TPS Pasar Besar</td>
-            <td class="desc-cell">Keterlambatan pengangkutan lebih dari 3 hari. Banyak lalat di sekitar...</td>
-            <td><span class="status-pill status-selesai">Selesai</span></td>
-            <td><span class="done-label">✓ Selesai</span></td>
+          <tr data-status="nonaktif" data-search="joko prasetyo 19850119006 taman">
+            <td>
+              <div class="petugas-cell">
+                <span class="petugas-avatar">J</span>
+                <div>
+                  <div class="petugas-name">Joko Prasetyo</div>
+                  <div class="petugas-role">Petugas Lapangan</div>
+                </div>
+              </div>
+            </td>
+            <td class="nip-cell">19850119006</td>
+            <td class="wilayah-cell">Taman</td>
+            <td class="kontak-cell">0819-7765-3312</td>
+            <td class="kendaraan-cell">-</td>
+            <td><span class="status-pill status-nonaktif">Nonaktif</span></td>
+            <td><a href="#" class="detail-link">Detail ›</a></td>
           </tr>
         </tbody>
       </table>
@@ -636,7 +782,7 @@
 <script>
   const searchInput = document.getElementById('searchInput');
   const statusFilter = document.getElementById('statusFilter');
-  const rows = document.querySelectorAll('#reportTableBody tr');
+  const rows = document.querySelectorAll('#petugasTableBody tr');
 
   function applyFilters() {
     const query = searchInput.value.trim().toLowerCase();

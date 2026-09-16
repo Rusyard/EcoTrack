@@ -415,14 +415,19 @@
         <span class="notif-dot"></span>
       </div>
       <div class="user-chip">
-        <div class="avatar">B</div>
-        Budi
+        <div class="avatar">{{ strtoupper(substr(Auth::user()->nama_lengkap, 0, 1)) }}</div>
+        {{ explode(' ', Auth::user()->nama_lengkap)[0] }}
       </div>
-      <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-        <path d="M16 17l5-5-5-5"/>
-        <path d="M21 12H9"/>
-      </svg>
+      <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+    @csrf
+    <button type="submit" class="logout-icon" style="background: none; border: none; padding: 0; cursor: pointer; display: flex;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <path d="M16 17l5-5-5-5"/>
+            <path d="M21 12H9"/>
+        </svg>
+    </button>
+</form>
     </div>
   </nav>
 
@@ -431,7 +436,7 @@
     <!-- HERO -->
     <div class="hero">
       <div class="hero-eyebrow">Selamat datang kembali,</div>
-      <div class="hero-name">Budi Santoso 👋</div>
+      <div class="hero-name">{{ Auth::user()->nama_lengkap }} </div>
       <p class="hero-desc">Mari jaga kebersihan lingkungan sekitar kita! Laporkan kondisi TPS di dekat Anda.</p>
       <button class="btn-hero">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>

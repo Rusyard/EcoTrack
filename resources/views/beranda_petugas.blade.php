@@ -413,17 +413,22 @@
         <span class="notif-dot"></span>
       </div>
       <div class="user-block">
-        <div class="avatar">A</div>
+        <div class="avatar">{{ strtoupper(substr(Auth::user()->nama_lengkap, 0, 1)) }}</div>
         <div>
-          <div class="user-name">Agus Widodo</div>
-          <div class="user-meta">NIP: 19870512001 · Kartoharjo</div>
+          <div class="user-name">{{ Auth::user()->nama_lengkap }}</div>
+          <div class="user-meta">NIP: {{ Auth::user()->nip }} · {{ Auth::user()->wilayah_tugas }}</div>
         </div>
       </div>
-      <svg class="exit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-        <path d="M16 17l5-5-5-5"/>
-        <path d="M21 12H9"/>
-      </svg>
+      <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+           @csrf
+          <button type="submit" class="exit-icon" style="background: none; border: none; padding: 0; cursor: pointer; display: flex;">
+             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                 <path d="M16 17l5-5-5-5"/>
+                 <path d="M21 12H9"/>
+             </svg>
+          </button>
+       </form>
     </div>
   </nav>
 
@@ -432,7 +437,7 @@
     <div class="hero-top">
       <div>
         <div class="shift-label">Shift Aktif — Senin, 01 Juni 2026</div>
-        <div class="hero-greet">Selamat bertugas, Agus!</div>
+        <div class="hero-greet">Selamat bertugas, {{ explode(' ', Auth::user()->nama_lengkap)[0] }}</div>
       </div>
 
       <div class="mini-stats">

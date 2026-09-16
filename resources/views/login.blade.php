@@ -243,7 +243,8 @@
     <p class="tagline">Manajemen keberlanjutan dan efisiensi limbah terpadu</p>
 
     <div class="login-card">
-      <form id="loginForm">
+      <form id="loginForm" method="POST" action="{{ route('login.post') }}">
+        @csrf
         <div class="field">
           <div class="field-header">
             <label for="username">Username atau NIP</label>
@@ -253,7 +254,7 @@
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
-            <input type="text" id="username" name="username" placeholder="Masukkan username (masyarakat) atau NIP (petugas/dinas)" required>
+            <input type="text" id="username" name="identifier" placeholder="Masukkan username (masyarakat) atau NIP (petugas/dinas)"  value ="{{ old('identifier') }}" required>
           </div>
           <div class="error-text" id="errorText">ID tidak ditemukan. Periksa kembali username atau NIP Anda.</div>
         </div>
@@ -277,6 +278,10 @@
           <label for="remember">Ingat Saya</label>
         </div>
 
+        @error('identifier')
+          <div class="error-text" style="display: block;">{{ $message }}</div>
+        @enderror
+
         <button type="submit" class="btn-submit">
           Masuk Ke Aplikasi
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -289,9 +294,9 @@
         <hr class="divider">
 
         <div class="help-text">
-          Butuh bantuan akses?<br>
-          <a href="#" class="help-link">
-            Hubungi Admin Sistem
+          belum punya akun?<br>
+          <a href="{{ route('registrasi') }}" class="help-link">
+            Daftar Sekarang
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M18.36 12A6.36 6.36 0 1 1 12 5.64"/>
               <path d="M9 9h.01M15 9h.01"/>
@@ -334,24 +339,6 @@
       dinas: 'admin-dashboard-ecotrack.html'
     };
 
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const role = detectRole(usernameInput.value);
-
-      if (!role) {
-        usernameGroup.classList.add('error');
-        errorText.style.display = 'block';
-        return;
-      }
-
-      usernameGroup.classList.remove('error');
-      errorText.style.display = 'none';
-
-      // Sistem otomatis mengenali peran dari ID yang dimasukkan lalu
-      // mengarahkan langsung ke dashboard yang sesuai — tanpa perlu memilih peran manual.
-      window.location.href = roleRedirect[role];
-    });
   </script>
 
 </body>

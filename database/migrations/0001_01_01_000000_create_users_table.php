@@ -7,9 +7,12 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * File ini menggantikan migration users bawaan Laravel.
      * Timpa langsung file 0001_01_01_000000_create_users_table.php
      * yang sudah ada di project kamu dengan isi ini.
+     *
+     * Versi ini sudah termasuk tabel password_reset_tokens dan
+     * sessions (bawaan default Laravel) yang kemarin sempat
+     * ke-skip pas saya modif tabel users-nya.
      */
     public function up(): void
     {
@@ -40,10 +43,27 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
+
+        Schema::create('password_reset_tokens', function (Blueprint $table) {
+            $table->string('email')->primary();
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
+        });
+
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->foreignId('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
     }
 
     public function down(): void
     {
         Schema::dropIfExists('users');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('sessions');
     }
 };
