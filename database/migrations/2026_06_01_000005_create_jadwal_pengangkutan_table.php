@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('kode_jadwal', 10)->unique(); // JDW001, JDW002, ...
 
-            // nullable: jadwal rutin bisa dibuat tanpa berasal dari laporan warga
+           
             $table->foreignId('laporan_id')->nullable()->constrained('laporan')->nullOnDelete();
 
             $table->foreignId('tps_id')->constrained('tps')->cascadeOnDelete();

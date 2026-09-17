@@ -34,6 +34,38 @@ Route::middleware('auth')->group(function () {
         return view('beranda_petugas');
     })->name('beranda.petugas');
 
+    Route::get('/detail-tugas/{id}', function ($id) {
+        // Data dummy sementara - nanti diganti ambil dari tabel jadwal_pengangkutan berdasarkan $id
+        $dummy = [
+            1 => [
+                'tps_target' => 'TPS Taman Kota',
+                'alamat' => 'Jl. Pahlawan No. 12, Kartoharjo',
+                'tanggal' => '2026-06-01',
+                'jam' => '09:00',
+                'kapasitas' => 85,
+                'instruksi' => 'Prioritas tinggi - sudah 2 hari menumpuk. Gunakan truk kapasitas besar.',
+                'status_saat_ini' => 'Sedang Diproses',
+                'id_jadwal' => 'SCH001',
+                'jenis_tugas' => 'Mendesak',
+            ],
+            2 => [
+                'tps_target' => 'TPS Nambangan',
+                'alamat' => 'Jl. Nambangan Lor No. 8, Manguharjo',
+                'tanggal' => '2026-06-01',
+                'jam' => '11:00',
+                'kapasitas' => 92,
+                'instruksi' => 'TPS penuh total, segera angkut. Perhatikan keamanan lalu lintas.',
+                'status_saat_ini' => 'Belum Diangkut',
+                'id_jadwal' => 'SCH002',
+                'jenis_tugas' => 'Mendesak',
+            ],
+        ];
+
+        $data = $dummy[$id] ?? $dummy[1];
+
+        return view('detail_tugas_petugas', $data);
+    })->name('detail.tugas.petugas');
+
     // --- Dinas (Admin) ---
     Route::get('/beranda-dinas', function () {
         return view('beranda_dinas');

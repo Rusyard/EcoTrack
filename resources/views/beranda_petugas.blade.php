@@ -255,6 +255,8 @@
     padding: 18px 20px;
     cursor: pointer;
     transition: box-shadow 0.15s ease;
+    text-decoration: none;
+    color: inherit;
   }
 
   .task-card:hover {
@@ -283,6 +285,9 @@
 
   .task-icon.red { background: #fee2e2; }
   .task-icon.red svg { stroke: #dc2626; }
+
+  .task-icon.green { background: #dcfce7; }
+  .task-icon.green svg { stroke: #16a34a; }
 
   .task-body {
     flex: 1;
@@ -457,20 +462,21 @@
     </div>
 
     <div class="tabs">
-      <button class="tab active">Hari Ini (2 Tugas)</button>
-      <button class="tab inactive">Besok (1 Tugas)</button>
+      <button id="tab-hari-ini" class="tab active" onclick="gantiTab('hari-ini')">Hari Ini (2 Tugas)</button>
+      <button id="tab-besok" class="tab inactive" onclick="gantiTab('besok')">Besok (1 Tugas)</button>
     </div>
   </div>
 
   <!-- MAIN -->
   <div class="main">
+  <div id="konten-hari-ini">
     <div class="warning-line">
       <svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
       TUGAS MENDESAK — PRIORITAS TINGGI
     </div>
 
     <div class="task-list">
-      <div class="task-card">
+      <a href="{{ route('detail.tugas.petugas', 1) }}" class="task-card" style="text-decoration:none; color:inherit;">
         <div class="task-icon blue">
           <svg viewBox="0 0 24 24"><path d="M14 18V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h1"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62L19 8h-4"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
         </div>
@@ -493,9 +499,9 @@
           </div>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-      </div>
+      </a>
 
-      <div class="task-card">
+      <a href="{{ route('detail.tugas.petugas', 2) }}" class="task-card" style="text-decoration:none; color:inherit;">
         <div class="task-icon red">
           <svg viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
         </div>
@@ -518,9 +524,68 @@
           </div>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div id="konten-besok" style="display:none;">
+    <div class="warning-line" style="color:#16a34a;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 18V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h1"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62L19 8h-4"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+      JADWAL RUTIN
+    </div>
+
+    <div class="task-list">
+      <div class="task-card" style="border-left-color:#1eb980;">
+        <div class="task-icon green">
+          <svg viewBox="0 0 24 24" stroke="currentColor"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="task-body">
+          <div class="task-title-row">
+            <div class="task-title">TPS Oro-Oro Ombo</div>
+          </div>
+          <div class="task-address">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            Jl. Kalimantan No. 11, Kartoharjo
+          </div>
+          <div class="task-note">"Pengangkutan rutin mingguan."</div>
+          <div class="task-footer">
+            <div class="task-time">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              08:00
+            </div>
+            <span class="status-pill status-belum">Belum Diangkut</span>
+          </div>
+        </div>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
       </div>
     </div>
   </div>
+  </div>
+
+  <script>
+    function gantiTab(tab) {
+      const hariIni = document.getElementById('konten-hari-ini');
+      const besok = document.getElementById('konten-besok');
+      const tabHariIni = document.getElementById('tab-hari-ini');
+      const tabBesok = document.getElementById('tab-besok');
+
+      if (tab === 'hari-ini') {
+        hariIni.style.display = 'block';
+        besok.style.display = 'none';
+        tabHariIni.classList.add('active');
+        tabHariIni.classList.remove('inactive');
+        tabBesok.classList.add('inactive');
+        tabBesok.classList.remove('active');
+      } else {
+        hariIni.style.display = 'none';
+        besok.style.display = 'block';
+        tabBesok.classList.add('active');
+        tabBesok.classList.remove('inactive');
+        tabHariIni.classList.add('inactive');
+        tabHariIni.classList.remove('active');
+      }
+    }
+  </script>
 
 </body>
 </html>

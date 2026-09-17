@@ -438,10 +438,10 @@
       <div class="hero-eyebrow">Selamat datang kembali,</div>
       <div class="hero-name">{{ Auth::user()->nama_lengkap }} </div>
       <p class="hero-desc">Mari jaga kebersihan lingkungan sekitar kita! Laporkan kondisi TPS di dekat Anda.</p>
-      <button class="btn-hero">
+      <a href="{{ route('form.laporan') }}" class="btn-hero">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
         Laporkan Sekarang
-      </button>
+      </a>
     </div>
 
     <!-- STAT CARDS -->
@@ -481,10 +481,7 @@
     <div class="history-card">
       <div class="history-header">
         <div class="history-title">Histori Laporan Saya</div>
-        <button class="btn-new">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-          Buat Laporan
-        </button>
+        
       </div>
 
       <table>
