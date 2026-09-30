@@ -277,6 +277,12 @@
       padding: 40px 24px;
     }
   }
+
+  .error-text {
+    color: #dc2626;
+    font-size: 0.8rem;
+    margin-top: 6px;
+  }
 </style>
 </head>
 <body>
@@ -324,7 +330,8 @@
       <h1 class="title">Buat Akun Baru</h1>
       <p class="lead">Daftarkan diri Anda untuk mulai berkontribusi pada kebersihan kota.</p>
 
-      <form id="registerForm">
+      <form id="registerForm" method="POST" action="{{ route('registrasi.post') }}">
+        @csrf
         <div class="field">
           <label for="fullname">Nama Lengkap</label>
           <div class="input-group">
@@ -332,40 +339,39 @@
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
-            <input type="text" id="fullname" name="fullname" placeholder="Masukkan nama lengkap" required>
+            <input type="text" id="fullname" name="nama_lengkap" value="{{ old('nama_lengkap') }}" placeholder="Masukkan nama lengkap" required>
           </div>
+          @error('nama_lengkap')
+            <div class="error-text">{{ $message }}</div>
+          @enderror
         </div>
 
         <div class="field">
-          <label for="email">Email atau Username</label>
+          <label for="email">Email</label>
           <div class="input-group">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="2" y="4" width="20" height="16" rx="2"/>
               <path d="m2 7 10 6 10-6"/>
             </svg>
-            <input type="text" id="email" name="email" placeholder="contoh@ecotrack.com" required>
+            <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="contoh@ecotrack.com" autocomplete="email" required>
           </div>
+          @error('email')
+            <div class="error-text">{{ $message }}</div>
+          @enderror
         </div>
 
         <div class="field">
-          <label for="role">Peran/Kategori Pengguna</label>
-          <div class="input-group select-group">
+          <label for="username">Username</label>
+          <div class="input-group">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 20v-2a4 4 0 0 0-3-3.87"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              <circle cx="12" cy="7" r="4"/>
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
             </svg>
-            <select id="role" name="role" required>
-              <option value="" disabled selected>Pilih Peran</option>
-              <option value="warga">Warga</option>
-              <option value="petugas">Petugas Kebersihan</option>
-              <option value="admin">Admin TPS</option>
-            </select>
-            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-              <path d="m6 9 6 6 6-6"/>
-            </svg>
+            <input type="text" id="username" name="username" value="{{ old('username') }}" placeholder="Masukkan username" autocomplete="username" required>
           </div>
+          @error('username')
+            <div class="error-text">{{ $message }}</div>
+          @enderror
         </div>
 
         <div class="row-2">
@@ -387,10 +393,14 @@
                 <circle cx="12" cy="12" r="10"/>
                 <path d="m9 12 2 2 4-4"/>
               </svg>
-              <input type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required>
+              <input type="password" id="confirmPassword" name="password_confirmation" placeholder="••••••••" required>
             </div>
           </div>
         </div>
+
+        @error('password')
+          <div class="error-text" style="margin-top: -8px; margin-bottom: 16px;">{{ $message }}</div>
+        @enderror
 
         <button type="submit" class="btn-submit">
           Daftar Sekarang
@@ -400,7 +410,7 @@
           </svg>
         </button>
 
-        <p class="login-hint">Sudah punya akun? <a href="login-ecotrack.html">Login di sini</a></p>
+        <p class="login-hint">Sudah punya akun? <a href="{{ route('login') }}">Login di sini</a></p>
 
         <hr class="divider">
 
@@ -410,19 +420,6 @@
   </div>
 
 </div>
-
-<script>
-  document.getElementById('registerForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const pass = document.getElementById('password').value;
-    const confirm = document.getElementById('confirmPassword').value;
-    if (pass !== confirm) {
-      alert('Password dan konfirmasi password tidak cocok.');
-      return;
-    }
-    alert('Form pendaftaran siap dihubungkan ke backend.');
-  });
-</script>
 
 </body>
 </html>

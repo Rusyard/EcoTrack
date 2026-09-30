@@ -12,9 +12,11 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/registrasi', function () {
-    return view('registrasi');
-})->name('registrasi');
+Route::get('/registrasi', [AuthController::class, 'showRegisterForm'])->name('registrasi');
+// throttle: maks 6 percobaan per menit per IP, biar form tidak bisa di-spam.
+Route::post('/registrasi', [AuthController::class, 'register'])
+    ->middleware('throttle:6,1')
+    ->name('registrasi.post');
 
 
 // ===== Halaman yang butuh login (semua role) =====
