@@ -285,6 +285,7 @@
   /* FILTER BAR */
   .filter-bar {
     display: flex;
+    flex-wrap: wrap;
     gap: 12px;
     margin-bottom: 18px;
   }
@@ -374,6 +375,142 @@
   .btn-new svg {
     width: 15px;
     height: 15px;
+  }
+
+  /* ===== ALERT (flash message) ===== */
+  .alert {
+    padding: 13px 18px;
+    border-radius: 9px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 18px;
+  }
+
+  .alert-success {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+  }
+
+  /* ===== MODAL: Tambah Petugas ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.5);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+  }
+
+  .modal-overlay.is-open {
+    display: flex;
+  }
+
+  .modal-box {
+    background: #ffffff;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 26px 28px 28px;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .modal-header h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 4px;
+    line-height: 0;
+  }
+
+  .modal-close svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .modal-field {
+    margin-bottom: 15px;
+  }
+
+  .modal-field label {
+    display: block;
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 6px;
+  }
+
+  .modal-field input,
+  .modal-field select {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 0.88rem;
+    font-family: inherit;
+    color: #111827;
+  }
+
+  .modal-field input:focus,
+  .modal-field select:focus {
+    outline: none;
+    border-color: #0f5c3f;
+  }
+
+  .modal-field .error-text {
+    color: #dc2626;
+    font-size: 0.78rem;
+    margin-top: 5px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .modal-actions .btn-cancel {
+    flex: 1;
+    background: #f3f4f6;
+    color: #374151;
+    border: none;
+    border-radius: 8px;
+    padding: 11px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .modal-actions .btn-submit {
+    flex: 1;
+    background: #0f5c3f;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 11px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .modal-actions .btn-submit:hover {
+    background: #0c4a33;
   }
 
   /* TABLE */
@@ -615,22 +752,26 @@
       </div>
     </div>
 
+    @if (session('success'))
+      <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
     <!-- STAT CARDS -->
     <div class="stat-grid">
       <div class="stat-card">
-        <div class="stat-value blue">8</div>
+        <div class="stat-value blue">{{ $totalPetugas }}</div>
         <div class="stat-title">Total Petugas</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value green">3</div>
+        <div class="stat-value green">{{ $jumlahBertugas }}</div>
         <div class="stat-title">Sedang Bertugas</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value orange">1</div>
+        <div class="stat-value orange">{{ $jumlahCuti }}</div>
         <div class="stat-title">Cuti</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value gray">1</div>
+        <div class="stat-value gray">{{ $jumlahNonaktif }}</div>
         <div class="stat-title">Nonaktif</div>
       </div>
     </div>
@@ -651,6 +792,10 @@
         </select>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
       </div>
+      <button type="button" class="btn-new" onclick="bukaModalTambahPetugas()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Tambah Petugas
+      </button>
     </div>
 
     <!-- TABLE -->
@@ -668,113 +813,115 @@
           </tr>
         </thead>
         <tbody id="petugasTableBody">
-          <tr data-status="bertugas" data-search="agus widodo 19870512001 kartoharjo">
-            <td>
-              <div class="petugas-cell">
-                <span class="petugas-avatar">A</span>
-                <div>
-                  <div class="petugas-name">Agus Widodo</div>
-                  <div class="petugas-role">Petugas Lapangan</div>
+          @forelse ($petugas as $p)
+            <tr
+              data-status="{{ $p->status }}"
+              data-search="{{ strtolower($p->nama_lengkap.' '.$p->nip.' '.$p->wilayah_tugas) }}"
+            >
+              <td>
+                <div class="petugas-cell">
+                  <span class="petugas-avatar">{{ strtoupper(substr($p->nama_lengkap, 0, 1)) }}</span>
+                  <div>
+                    <div class="petugas-name">{{ $p->nama_lengkap }}</div>
+                    <div class="petugas-role">Petugas Lapangan</div>
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td class="nip-cell">19870512001</td>
-            <td class="wilayah-cell">Kartoharjo</td>
-            <td class="kontak-cell">0812-3456-7801</td>
-            <td class="kendaraan-cell">Truk B 9012 KA</td>
-            <td><span class="status-pill status-bertugas">Sedang Bertugas</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
-          <tr data-status="bertugas" data-search="dedi kurniawan 19900823002 manguharjo">
-            <td>
-              <div class="petugas-cell">
-                <span class="petugas-avatar">D</span>
-                <div>
-                  <div class="petugas-name">Dedi Kurniawan</div>
-                  <div class="petugas-role">Petugas Lapangan</div>
-                </div>
-              </div>
-            </td>
-            <td class="nip-cell">19900823002</td>
-            <td class="wilayah-cell">Manguharjo</td>
-            <td class="kontak-cell">0813-2211-9087</td>
-            <td class="kendaraan-cell">Truk B 4471 AB</td>
-            <td><span class="status-pill status-bertugas">Sedang Bertugas</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
-          <tr data-status="aktif" data-search="rina wulandari 19921107003 taman">
-            <td>
-              <div class="petugas-cell">
-                <span class="petugas-avatar">R</span>
-                <div>
-                  <div class="petugas-name">Rina Wulandari</div>
-                  <div class="petugas-role">Petugas Lapangan</div>
-                </div>
-              </div>
-            </td>
-            <td class="nip-cell">19921107003</td>
-            <td class="wilayah-cell">Taman</td>
-            <td class="kontak-cell">0857-6634-2210</td>
-            <td class="kendaraan-cell">Truk B 7723 CD</td>
-            <td><span class="status-pill status-bertugas">Sedang Bertugas</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
-          <tr data-status="aktif" data-search="bambang setiawan 19880314004 kartoharjo">
-            <td>
-              <div class="petugas-cell">
-                <span class="petugas-avatar">B</span>
-                <div>
-                  <div class="petugas-name">Bambang Setiawan</div>
-                  <div class="petugas-role">Petugas Lapangan</div>
-                </div>
-              </div>
-            </td>
-            <td class="nip-cell">19880314004</td>
-            <td class="wilayah-cell">Kartoharjo</td>
-            <td class="kontak-cell">0821-4432-6650</td>
-            <td class="kendaraan-cell">Truk B 2290 EF</td>
-            <td><span class="status-pill status-aktif">Aktif</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
-          <tr data-status="cuti" data-search="yuli astuti 19950602005 manguharjo">
-            <td>
-              <div class="petugas-cell">
-                <span class="petugas-avatar">Y</span>
-                <div>
-                  <div class="petugas-name">Yuli Astuti</div>
-                  <div class="petugas-role">Petugas Lapangan</div>
-                </div>
-              </div>
-            </td>
-            <td class="nip-cell">19950602005</td>
-            <td class="wilayah-cell">Manguharjo</td>
-            <td class="kontak-cell">0878-1123-4590</td>
-            <td class="kendaraan-cell">-</td>
-            <td><span class="status-pill status-cuti">Cuti</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
-          <tr data-status="nonaktif" data-search="joko prasetyo 19850119006 taman">
-            <td>
-              <div class="petugas-cell">
-                <span class="petugas-avatar">J</span>
-                <div>
-                  <div class="petugas-name">Joko Prasetyo</div>
-                  <div class="petugas-role">Petugas Lapangan</div>
-                </div>
-              </div>
-            </td>
-            <td class="nip-cell">19850119006</td>
-            <td class="wilayah-cell">Taman</td>
-            <td class="kontak-cell">0819-7765-3312</td>
-            <td class="kendaraan-cell">-</td>
-            <td><span class="status-pill status-nonaktif">Nonaktif</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
+              </td>
+              <td class="nip-cell">{{ $p->nip }}</td>
+              <td class="wilayah-cell">{{ $p->wilayah_tugas ?? '-' }}</td>
+              <td class="kontak-cell">{{ $p->kontak ?? '-' }}</td>
+              {{-- Kendaraan ditentukan per-jadwal (tabel jadwal_pengangkutan), bukan
+                   melekat ke petugas, jadi belum ada kendaraan tetap yang ditampilkan di sini. --}}
+              <td class="kendaraan-cell">-</td>
+              <td><span class="status-pill status-{{ $p->status }}">{{ ucwords(str_replace('_', ' ', $p->status === 'bertugas' ? 'Sedang Bertugas' : $p->status)) }}</span></td>
+              <td><a href="#" class="detail-link">Detail ›</a></td>
+            </tr>
+          @empty
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 28px; color: #6b7280;">
+                Belum ada data petugas.
+              </td>
+            </tr>
+          @endforelse
         </tbody>
       </table>
     </div>
 
   </main>
+
+  <!-- MODAL: Tambah Petugas -->
+  <div
+    class="modal-overlay @error('nip') is-open @enderror @error('nama_lengkap') is-open @enderror @error('kontak') is-open @enderror @error('wilayah_tugas') is-open @enderror @error('password') is-open @enderror"
+    id="modalTambahPetugas"
+  >
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>Tambah Petugas</h2>
+        <button type="button" class="modal-close" onclick="tutupModalTambahPetugas()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form method="POST" action="{{ route('keloladata.petugas.store') }}">
+        @csrf
+
+        <div class="modal-field">
+          <label for="tp_nama_lengkap">Nama Lengkap</label>
+          <input type="text" id="tp_nama_lengkap" name="nama_lengkap" value="{{ old('nama_lengkap') }}" placeholder="Masukkan nama lengkap">
+          @error('nama_lengkap')
+            <div class="error-text">{{ $message }}</div>
+          @enderror
+        </div>
+
+        <div class="modal-field">
+          <label for="tp_nip">NIP</label>
+          <input type="text" id="tp_nip" name="nip" value="{{ old('nip') }}" placeholder="Masukkan NIP" inputmode="numeric">
+          @error('nip')
+            <div class="error-text">{{ $message }}</div>
+          @enderror
+        </div>
+
+        <div class="modal-field">
+          <label for="tp_wilayah_tugas">Wilayah Tugas</label>
+          <select id="tp_wilayah_tugas" name="wilayah_tugas">
+            <option value="" disabled {{ old('wilayah_tugas') ? '' : 'selected' }}>Pilih wilayah tugas</option>
+            @foreach (['Kartoharjo', 'Manguharjo', 'Taman'] as $wilayah)
+              <option value="{{ $wilayah }}" {{ old('wilayah_tugas') === $wilayah ? 'selected' : '' }}>{{ $wilayah }}</option>
+            @endforeach
+          </select>
+          @error('wilayah_tugas')
+            <div class="error-text">{{ $message }}</div>
+          @enderror
+        </div>
+
+        <div class="modal-field">
+          <label for="tp_kontak">Kontak</label>
+          <input type="text" id="tp_kontak" name="kontak" value="{{ old('kontak') }}" placeholder="0812-3456-7890">
+          @error('kontak')
+            <div class="error-text">{{ $message }}</div>
+          @enderror
+        </div>
+
+        <div class="modal-field">
+          <label for="tp_password">Password Awal</label>
+          <input type="password" id="tp_password" name="password" placeholder="Minimal 8 karakter, ada huruf & angka">
+          @error('password')
+            <div class="error-text">{{ $message }}</div>
+          @enderror
+        </div>
+
+        <div class="modal-field">
+          <label for="tp_password_confirmation">Konfirmasi Password</label>
+          <input type="password" id="tp_password_confirmation" name="password_confirmation" placeholder="Ulangi password">
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="tutupModalTambahPetugas()">Batal</button>
+          <button type="submit" class="btn-submit">Simpan Petugas</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
 </div>
 
@@ -796,6 +943,24 @@
 
   searchInput.addEventListener('input', applyFilters);
   statusFilter.addEventListener('change', applyFilters);
+
+  // ===== Modal Tambah Petugas =====
+  const modalTambahPetugas = document.getElementById('modalTambahPetugas');
+
+  function bukaModalTambahPetugas() {
+    modalTambahPetugas.classList.add('is-open');
+  }
+
+  function tutupModalTambahPetugas() {
+    modalTambahPetugas.classList.remove('is-open');
+  }
+
+  // Klik di luar kotak modal (di area overlay gelap) ikut menutup modal.
+  modalTambahPetugas.addEventListener('click', (e) => {
+    if (e.target === modalTambahPetugas) {
+      tutupModalTambahPetugas();
+    }
+  });
 </script>
 
 </body>

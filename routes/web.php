@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PetugasController;
 use Illuminate\Support\Facades\Route;
 
 // ===== Halaman umum =====
@@ -81,7 +82,14 @@ Route::middleware('auth')->group(function () {
         return view('jadwal_pengangkutan_dinas');
     })->name('jadwal.pengangkutan.dinas');
 
-    Route::get('/keloladata-petugas-dinas', function () {
-        return view('keloladata_petugas_dinas');
-    })->name('keloladata.petugas.dinas');
+    // Halaman ini menampilkan data pribadi petugas (NIP, kontak), dan
+    // hanya dinas yang boleh menambah akun petugas baru, jadi GET & POST
+    // dua-duanya dibatasi role:dinas.
+    Route::middleware('role:dinas')->group(function () {
+        Route::get('/keloladata-petugas-dinas', [PetugasController::class, 'index'])
+            ->name('keloladata.petugas.dinas');
+
+        Route::post('/keloladata-petugas-dinas', [PetugasController::class, 'store'])
+            ->name('keloladata.petugas.store');
+    });
 });
