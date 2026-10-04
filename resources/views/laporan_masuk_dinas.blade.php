@@ -456,6 +456,87 @@
     font-size: 0.82rem;
   }
 
+  .alert {
+    padding: 13px 18px;
+    border-radius: 9px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 18px;
+  }
+
+  .alert-success {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+  }
+
+  /* ===== FOTO & LIGHTBOX ===== */
+  .foto-thumb {
+    width: 46px;
+    height: 46px;
+    border-radius: 8px;
+    object-fit: cover;
+    cursor: zoom-in;
+    border: 1px solid #e5e7eb;
+    display: block;
+  }
+
+  .foto-none {
+    color: #9ca3af;
+    font-size: 0.82rem;
+  }
+
+  .lightbox-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.75);
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 200;
+  }
+
+  .lightbox-overlay.is-open {
+    display: flex;
+  }
+
+  .lightbox-box {
+    position: relative;
+    max-width: min(90vw, 700px);
+    max-height: 90vh;
+  }
+
+  .lightbox-box img {
+    width: 100%;
+    height: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 10px;
+    display: block;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+
+  .lightbox-close svg {
+    width: 16px;
+    height: 16px;
+  }
+
   @media (max-width: 760px) {
     .sidebar { display: none; }
     .table-card { overflow-x: auto; }
@@ -559,6 +640,10 @@
       </div>
     </div>
 
+    @if (session('success'))
+      <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
     <!-- TABLE -->
     <div class="table-card">
       <table>
@@ -569,70 +654,67 @@
             <th>Pelapor</th>
             <th>Lokasi TPS</th>
             <th>Deskripsi</th>
+            <th>Foto</th>
             <th>Status</th>
             <th>Tindakan</th>
           </tr>
         </thead>
         <tbody id="reportTableBody">
-          <tr data-status="dijadwalkan" data-search="rpt001 budi santoso tps taman kota">
-            <td class="id-cell">RPT001</td>
-            <td class="date-cell">2026-05-31 14:20</td>
-            <td class="pelapor-cell">Budi Santoso</td>
-            <td class="lokasi-cell">TPS Taman Kota</td>
-            <td class="desc-cell">Sampah menumpuk dan berbau tidak sedap, sudah 2 hari belum...</td>
-            <td><span class="status-pill status-dijadwalkan">Dijadwalkan</span></td>
-            <td><button class="action-btn validasi">Validasi</button></td>
-          </tr>
-          <tr data-status="menunggu" data-search="rpt002 budi santoso tps nambangan">
-            <td class="id-cell">RPT002</td>
-            <td class="date-cell">2026-06-01 07:45</td>
-            <td class="pelapor-cell">Budi Santoso</td>
-            <td class="lokasi-cell">TPS Nambangan</td>
-            <td class="desc-cell">TPS penuh total, sampah meluber ke jalan dan mengganggu pejalan...</td>
-            <td><span class="status-pill status-menunggu">Menunggu</span></td>
-            <td><button class="action-btn jadwalkan">Jadwalkan</button></td>
-          </tr>
-          <tr data-status="menunggu" data-search="rpt005 siti rahayu tps nambangan">
-            <td class="id-cell">RPT005</td>
-            <td class="date-cell">2026-06-01 09:30</td>
-            <td class="pelapor-cell">Siti Rahayu</td>
-            <td class="lokasi-cell">TPS Nambangan</td>
-            <td class="desc-cell">TPS penuh dan meluber ke jalan masuk perumahan. Perlu...</td>
-            <td><span class="status-pill status-menunggu">Menunggu</span></td>
-            <td><button class="action-btn jadwalkan">Jadwalkan</button></td>
-          </tr>
-          <tr data-status="menunggu" data-search="rpt006 siti rahayu tps oro-oro ombo">
-            <td class="id-cell">RPT006</td>
-            <td class="date-cell">2026-06-01 10:15</td>
-            <td class="pelapor-cell">Siti Rahayu</td>
-            <td class="lokasi-cell">TPS Oro-Oro Ombo</td>
-            <td class="desc-cell">Sampah organik mulai membusuk, perlu segera diangkut.</td>
-            <td><span class="status-pill status-menunggu">Menunggu</span></td>
-            <td><button class="action-btn jadwalkan">Jadwalkan</button></td>
-          </tr>
-          <tr data-status="dijadwalkan" data-search="rpt007 siti rahayu tps pasar besar">
-            <td class="id-cell">RPT007</td>
-            <td class="date-cell">2026-05-30 08:00</td>
-            <td class="pelapor-cell">Siti Rahayu</td>
-            <td class="lokasi-cell">TPS Pasar Besar</td>
-            <td class="desc-cell">Volume sampah naik signifikan pasca hari raya.</td>
-            <td><span class="status-pill status-dijadwalkan">Dijadwalkan</span></td>
-            <td><button class="action-btn validasi">Validasi</button></td>
-          </tr>
-          <tr data-status="selesai" data-search="rpt003 budi santoso tps pasar besar">
-            <td class="id-cell">RPT003</td>
-            <td class="date-cell">2026-05-28 10:00</td>
-            <td class="pelapor-cell">Budi Santoso</td>
-            <td class="lokasi-cell">TPS Pasar Besar</td>
-            <td class="desc-cell">Keterlambatan pengangkutan lebih dari 3 hari. Banyak lalat di sekitar...</td>
-            <td><span class="status-pill status-selesai">Selesai</span></td>
-            <td><span class="done-label">✓ Selesai</span></td>
-          </tr>
+          @forelse ($laporan as $l)
+            <tr
+              data-status="{{ $l->status }}"
+              data-search="{{ strtolower($l->kode_laporan.' '.$l->pelapor->nama_lengkap.' '.$l->tps->nama_tps) }}"
+            >
+              <td class="id-cell">{{ $l->kode_laporan }}</td>
+              <td class="date-cell">{{ $l->tanggal_lapor->format('Y-m-d H:i') }}</td>
+              <td class="pelapor-cell">{{ $l->pelapor->nama_lengkap }}</td>
+              <td class="lokasi-cell">{{ $l->tps->nama_tps }}</td>
+              <td class="desc-cell">{{ \Illuminate\Support\Str::limit($l->deskripsi, 60) }}</td>
+              <td>
+                @if ($l->foto_url)
+                  <img
+                    src="{{ $l->foto_url }}"
+                    alt="Foto kondisi {{ $l->tps->nama_tps }}"
+                    class="foto-thumb"
+                    onclick="bukaLightbox('{{ $l->foto_url }}')"
+                  >
+                @else
+                  <span class="foto-none">Tanpa foto</span>
+                @endif
+              </td>
+              <td><span class="status-pill status-{{ $l->status }}">{{ ucfirst($l->status) }}</span></td>
+              <td>
+                @if ($l->status === 'selesai')
+                  <span class="done-label">✓ Selesai</span>
+                @elseif ($l->status === 'dijadwalkan')
+                  <button class="action-btn validasi">Validasi</button>
+                @else
+                  <button class="action-btn jadwalkan">Jadwalkan</button>
+                @endif
+              </td>
+            </tr>
+          @empty
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 28px; color: #6b7280;">
+                Belum ada laporan masuk.
+              </td>
+            </tr>
+          @endforelse
         </tbody>
       </table>
     </div>
 
   </main>
+
+  <!-- LIGHTBOX: lihat foto laporan ukuran penuh -->
+  <div class="lightbox-overlay" id="lightboxOverlay">
+    <div class="lightbox-box">
+      <button type="button" class="lightbox-close" onclick="tutupLightbox()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <img id="lightboxImage" src="" alt="Foto laporan ukuran penuh">
+    </div>
+  </div>
 
 </div>
 
@@ -654,6 +736,32 @@
 
   searchInput.addEventListener('input', applyFilters);
   statusFilter.addEventListener('change', applyFilters);
+
+  // ===== Lightbox foto laporan =====
+  const lightboxOverlay = document.getElementById('lightboxOverlay');
+  const lightboxImage = document.getElementById('lightboxImage');
+
+  function bukaLightbox(urlFoto) {
+    lightboxImage.src = urlFoto;
+    lightboxOverlay.classList.add('is-open');
+  }
+
+  function tutupLightbox() {
+    lightboxOverlay.classList.remove('is-open');
+    lightboxImage.src = '';
+  }
+
+  lightboxOverlay.addEventListener('click', (e) => {
+    if (e.target === lightboxOverlay) {
+      tutupLightbox();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      tutupLightbox();
+    }
+  });
 </script>
 
 </body>

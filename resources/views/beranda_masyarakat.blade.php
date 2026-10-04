@@ -403,10 +403,6 @@
     </div>
     
     <div class="nav-right">
-      <div class="icon-btn">
-        <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <span class="notif-dot"></span>
-      </div>
       <div class="user-chip">
         <div class="avatar">{{ strtoupper(substr(Auth::user()->nama_lengkap, 0, 1)) }}</div>
         {{ explode(' ', Auth::user()->nama_lengkap)[0] }}
@@ -444,7 +440,7 @@
           <svg viewBox="0 0 24 24" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
         </div>
         <div>
-          <div class="stat-number">4</div>
+          <div class="stat-number">{{ $totalLaporan }}</div>
           <div class="stat-label">Laporan Terkirim</div>
         </div>
       </div>
@@ -454,7 +450,7 @@
           <svg viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         </div>
         <div>
-          <div class="stat-number">1</div>
+          <div class="stat-number">{{ $sedangDiproses }}</div>
           <div class="stat-label">Sedang Diproses</div>
         </div>
       </div>
@@ -464,7 +460,7 @@
           <svg viewBox="0 0 24 24" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3"/></svg>
         </div>
         <div>
-          <div class="stat-number">2</div>
+          <div class="stat-number">{{ $selesaiDiangkut }}</div>
           <div class="stat-label">Selesai Diangkut</div>
         </div>
       </div>
@@ -474,7 +470,7 @@
     <div class="history-card">
       <div class="history-header">
         <div class="history-title">Histori Laporan Saya</div>
-        
+
       </div>
 
       <table>
@@ -489,38 +485,29 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td class="id-cell">RPT001</td>
-            <td>2026-05-31</td>
-            <td>TPS Taman Kota</td>
-            <td class="desc-cell">Sampah menumpuk dan berbau tidak sedap, sudah 2 hari belum diangkut. Volume sudah...</td>
-            <td><span class="status-pill status-proses">Proses Pengangkutan</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
-          <tr>
-            <td class="id-cell">RPT002</td>
-            <td>2026-06-01</td>
-            <td>TPS Nambangan</td>
-            <td class="desc-cell">TPS penuh total, sampah meluber ke jalan dan mengganggu pejalan kaki.</td>
-            <td><span class="status-pill status-menunggu">Menunggu Validasi</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
-          <tr>
-            <td class="id-cell">RPT003</td>
-            <td>2026-05-28</td>
-            <td>TPS Pasar Besar</td>
-            <td class="desc-cell">Keterlambatan pengangkutan lebih dari 3 hari. Banyak lalat dan tikus di sekitar TPS.</td>
-            <td><span class="status-pill status-selesai">Selesai</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
-          <tr>
-            <td class="id-cell">RPT004</td>
-            <td>2026-05-27</td>
-            <td>TPS Oro-Oro Ombo</td>
-            <td class="desc-cell">Bak sampah hampir penuh dan butuh pengangkutan segera sebelum akhir pekan.</td>
-            <td><span class="status-pill status-selesai">Selesai</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
+          @forelse ($laporanSaya as $laporan)
+            @php
+              $statusInfo = [
+                'menunggu'    => ['kelas' => 'status-menunggu', 'label' => 'Menunggu Validasi'],
+                'dijadwalkan' => ['kelas' => 'status-proses', 'label' => 'Proses Pengangkutan'],
+                'selesai'     => ['kelas' => 'status-selesai', 'label' => 'Selesai'],
+              ][$laporan->status];
+            @endphp
+            <tr>
+              <td class="id-cell">{{ $laporan->kode_laporan }}</td>
+              <td>{{ $laporan->tanggal_lapor->format('Y-m-d') }}</td>
+              <td>{{ $laporan->tps->nama_tps }}</td>
+              <td class="desc-cell">{{ Str::limit($laporan->deskripsi, 80) }}</td>
+              <td><span class="status-pill {{ $statusInfo['kelas'] }}">{{ $statusInfo['label'] }}</span></td>
+              <td><a href="#" class="detail-link">Detail ›</a></td>
+            </tr>
+          @empty
+            <tr>
+              <td colspan="6" style="text-align: center; color: #9ca3af; padding: 28px 22px;">
+                Belum ada laporan yang kamu kirim. Yuk laporkan kondisi TPS di sekitarmu.
+              </td>
+            </tr>
+          @endforelse
         </tbody>
       </table>
     </div>

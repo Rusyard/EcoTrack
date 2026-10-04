@@ -303,6 +303,33 @@
     background: #17a06e;
   }
 
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .alert {
+    padding: 13px 18px;
+    border-radius: 9px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .alert-success {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+  }
+
+  .error-text {
+    color: #dc2626;
+    font-size: 0.82rem;
+    margin-top: 6px;
+  }
+
   @media (max-width: 600px) {
     .location-grid {
       grid-template-columns: 1fr;
@@ -336,7 +363,12 @@
     <h1 class="page-title">Formulir Pelaporan Kondisi TPS</h1>
     <p class="page-desc">Laporkan kondisi TPS yang membutuhkan perhatian segera dari Dinas Kebersihan.</p>
 
-    <form id="reportForm">
+    @if (session('success'))
+      <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    <form id="reportForm" method="POST" action="{{ route('form.laporan.store') }}" enctype="multipart/form-data">
+      @csrf
 
       <!-- 1. PILIH LOKASI -->
       <div class="section">
@@ -346,54 +378,19 @@
         </div>
 
         <div class="location-grid">
-          <label class="location-option">
-            <input type="radio" name="lokasi" value="TPS Taman Kota">
-            <div class="location-card">
-              <div class="location-name">TPS Taman Kota</div>
-              <div class="location-addr">Jl. Pahlawan No. 12, Kartoharjo</div>
-            </div>
-          </label>
-
-          <label class="location-option">
-            <input type="radio" name="lokasi" value="TPS Pasar Besar">
-            <div class="location-card">
-              <div class="location-name">TPS Pasar Besar</div>
-              <div class="location-addr">Jl. Sulawesi No. 5, Manguharjo</div>
-            </div>
-          </label>
-
-          <label class="location-option">
-            <input type="radio" name="lokasi" value="TPS Nambangan">
-            <div class="location-card">
-              <div class="location-name">TPS Nambangan</div>
-              <div class="location-addr">Jl. Nambangan Lor No. 8, Manguharjo</div>
-            </div>
-          </label>
-
-          <label class="location-option">
-            <input type="radio" name="lokasi" value="TPS Pandean">
-            <div class="location-card">
-              <div class="location-name">TPS Pandean</div>
-              <div class="location-addr">Jl. Pandean No. 3, Taman</div>
-            </div>
-          </label>
-
-          <label class="location-option">
-            <input type="radio" name="lokasi" value="TPS Oro-Oro Ombo">
-            <div class="location-card">
-              <div class="location-name">TPS Oro-Oro Ombo</div>
-              <div class="location-addr">Jl. Kalimantan No. 11, Kartoharjo</div>
-            </div>
-          </label>
-
-          <label class="location-option">
-            <input type="radio" name="lokasi" value="TPS Kejuron">
-            <div class="location-card">
-              <div class="location-name">TPS Kejuron</div>
-              <div class="location-addr">Jl. Mastrip No. 7, Manguharjo</div>
-            </div>
-          </label>
+          @foreach ($daftarTps as $t)
+            <label class="location-option">
+              <input type="radio" name="lokasi" value="{{ $t->nama_tps }}" {{ old('lokasi') === $t->nama_tps ? 'checked' : '' }}>
+              <div class="location-card">
+                <div class="location-name">{{ $t->nama_tps }}</div>
+                <div class="location-addr">{{ $t->alamat }}</div>
+              </div>
+            </label>
+          @endforeach
         </div>
+        @error('lokasi')
+          <div class="error-text">{{ $message }}</div>
+        @enderror
       </div>
 
       <!-- 2. DESKRIPSI -->
@@ -403,8 +400,11 @@
           2. Deskripsi Kondisi Lapangan
         </div>
 
-        <textarea id="deskripsi" name="deskripsi" minlength="20" placeholder="Jelaskan kondisi TPS secara detail. Contoh: Sampah menumpuk dan meluber ke jalan, sudah 3 hari tidak diangkut. Bau menyengat dan terdapat genangan air di sekitar TPS..."></textarea>
+        <textarea id="deskripsi" name="deskripsi" minlength="20" placeholder="Jelaskan kondisi TPS secara detail. Contoh: Sampah menumpuk dan meluber ke jalan, sudah 3 hari tidak diangkut. Bau menyengat dan terdapat genangan air di sekitar TPS...">{{ old('deskripsi') }}</textarea>
         <div class="char-count"><span id="charCount">0</span> karakter — minimal 20 karakter</div>
+        @error('deskripsi')
+          <div class="error-text">{{ $message }}</div>
+        @enderror
       </div>
 
       <!-- 3. UPLOAD FOTO -->
@@ -421,13 +421,16 @@
           <div class="upload-title">Seret &amp; Lepaskan Foto</div>
           <div class="upload-sub">atau klik untuk memilih dari perangkat Anda</div>
           <div class="upload-format">Format: JPG, PNG, WEBP — Maks. 5MB</div>
-          <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp">
+          <input type="file" id="fileInput" name="foto" accept="image/jpeg,image/png,image/webp">
           <div class="file-preview" id="filePreview"></div>
         </label>
+        @error('foto')
+          <div class="error-text">{{ $message }}</div>
+        @enderror
       </div>
 
       <div class="actions">
-        <button type="button" class="btn btn-cancel" onclick="window.location.href='dashboard-ecotrack.html'">Batal</button>
+        <a href="{{ route('beranda.masyarakat') }}" class="btn btn-cancel">Batal</a>
         <button type="submit" class="btn btn-submit">Kirim Laporan</button>
       </div>
 
@@ -475,17 +478,21 @@
     });
 
     document.getElementById('reportForm').addEventListener('submit', function(e) {
-      e.preventDefault();
+      // Cek cepat di browser biar user gak perlu nunggu round-trip ke
+      // server buat kesalahan sepele. Validasi yang sebenarnya (termasuk
+      // tipe & ukuran foto) tetap dilakukan di server lewat LaporanController.
       const lokasi = document.querySelector('input[name="lokasi"]:checked');
       if (!lokasi) {
+        e.preventDefault();
         alert('Silakan pilih lokasi TPS.');
         return;
       }
       if (textarea.value.length < 20) {
+        e.preventDefault();
         alert('Deskripsi minimal 20 karakter.');
         return;
       }
-      alert('Laporan siap dikirim ke server.');
+      // Gak ada preventDefault di sini: form lanjut submit beneran ke server.
     });
   </script>
 

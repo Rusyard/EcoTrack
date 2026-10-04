@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PetugasController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,13 +25,15 @@ Route::post('/registrasi', [AuthController::class, 'register'])
 Route::middleware('auth')->group(function () {
 
     // --- Masyarakat ---
-    Route::get('/beranda-masyarakat', function () {
-        return view('beranda_masyarakat');
-    })->name('beranda.masyarakat');
+    Route::get('/beranda-masyarakat', [LaporanController::class, 'beranda'])->name('beranda.masyarakat');
 
-    Route::get('/form-laporan', function () {
-        return view('form_laporan');
-    })->name('form.laporan');
+    Route::get('/form-laporan', [LaporanController::class, 'create'])->name('form.laporan');
+
+    // Hanya masyarakat yang mengirim laporan (petugas/dinas tidak masuk akal
+    // jadi pelapor), jadi disamakan dengan pola role:dinas di bawah.
+    Route::post('/form-laporan', [LaporanController::class, 'store'])
+        ->middleware('role:masyarakat')
+        ->name('form.laporan.store');
 
     // --- Petugas ---
     Route::get('/beranda-petugas', function () {
@@ -74,9 +77,11 @@ Route::middleware('auth')->group(function () {
         return view('beranda_dinas');
     })->name('beranda.dinas');
 
-    Route::get('/laporan-masuk-dinas', function () {
-        return view('laporan_masuk_dinas');
-    })->name('laporan.masuk.dinas');
+    // Halaman ini menampilkan data pribadi pelapor (nama) dan foto laporan,
+    // jadi dibatasi dinas saja — sama seperti halaman Data Petugas.
+    Route::get('/laporan-masuk-dinas', [LaporanController::class, 'index'])
+        ->middleware('role:dinas')
+        ->name('laporan.masuk.dinas');
 
     Route::get('/jadwal-pengangkutan-dinas', function () {
         return view('jadwal_pengangkutan_dinas');
