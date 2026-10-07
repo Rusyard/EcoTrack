@@ -12,9 +12,7 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/registrasi', function () {
-    return view('registrasi');
-})->name('registrasi');
+Route::get('/registrasi', [AuthController::class, 'showRegistrasiForm'])->name('registrasi');
 
 
 // ===== Halaman yang butuh login (semua role) =====

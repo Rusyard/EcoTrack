@@ -19,6 +19,28 @@ class AuthController extends Controller
     }
 
     /**
+     * Tampilkan halaman registrasi.
+     */
+    public function showRegistrasiForm()
+    {
+        return view('registrasi', [
+            'judul'    => 'EcoTrack - Buat Akun Baru',
+            'headline' => 'Pemantauan TPS Real-Time',
+            'subtext'  => 'Wujudkan lingkungan yang lebih bersih melalui pengelolaan limbah berbasis data yang cerdas dan efisien.',
+            'fitur'    => [
+                ['ikon' => 'lokasi', 'judul' => 'Lacak Lokasi',  'deskripsi' => 'Peta TPS terintegrasi secara langsung.'],
+                ['ikon' => 'grafik', 'judul' => 'Analisis Data', 'deskripsi' => 'Pantau level volume sampah harian.'],
+            ],
+            // Nilai ini sengaja dibiarkan sama dengan form lama; samakan dengan kolom `role` saat proses simpan dibuat.
+            'opsiPeran' => [
+                'warga'   => 'Warga',
+                'petugas' => 'Petugas Kebersihan',
+                'admin'   => 'Admin TPS',
+            ],
+        ]);
+    }
+
+    /**
      * Proses login: cari user berdasarkan username / email / NIP,
      * cek password, lalu redirect sesuai role.
      */

@@ -1,49 +1,19 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EcoTrack - Buat Akun Baru</title>
-<link rel="stylesheet" href="{{ asset('css/registrasi.css') }}">
-</head>
-<body>
+@extends('layout.app')
+
+@section('title', $judul)
+@section('css', 'resources/css/registrasi.css')
+@section('js', 'resources/js/registrasi.js')
+
+@section('content')
 
 <div class="page">
 
   <!-- PANEL KIRI -->
-  <div class="panel-left">
-    <div class="brand-row"><span class="eco">eco</span><span class="track">EcoTrack</span></div>
-    <h2 class="headline">Pemantauan TPS Real-Time</h2>
-    <p class="subtext">Wujudkan lingkungan yang lebih bersih melalui pengelolaan limbah berbasis data yang cerdas dan efisien.</p>
-
-    <div class="feature-list">
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24">
-            <path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/>
-            <circle cx="12" cy="10" r="3"/>
-          </svg>
-        </div>
-        <div>
-          <div class="feature-title">Lacak Lokasi</div>
-          <div class="feature-desc">Peta TPS terintegrasi secara langsung.</div>
-        </div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24">
-            <rect x="3" y="3" width="18" height="18" rx="2"/>
-            <path d="M8 17V11M12 17V7M16 17v-4"/>
-          </svg>
-        </div>
-        <div>
-          <div class="feature-title">Analisis Data</div>
-          <div class="feature-desc">Pantau level volume sampah harian.</div>
-        </div>
-      </div>
-    </div>
-  </div>
+  @include('partials.panel_kiri_registrasi', [
+      'headline' => $headline,
+      'subtext'  => $subtext,
+      'fitur'    => $fitur,
+  ])
 
   <!-- PANEL KANAN -->
   <div class="panel-right">
@@ -85,9 +55,9 @@
             </svg>
             <select id="role" name="role" required>
               <option value="" disabled selected>Pilih Peran</option>
-              <option value="warga">Warga</option>
-              <option value="petugas">Petugas Kebersihan</option>
-              <option value="admin">Admin TPS</option>
+              @foreach ($opsiPeran as $nilai => $label)
+                <option value="{{ $nilai }}">{{ $label }}</option>
+              @endforeach
             </select>
             <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
               <path d="m6 9 6 6 6-6"/>
@@ -127,7 +97,7 @@
           </svg>
         </button>
 
-        <p class="login-hint">Sudah punya akun? <a href="login-ecotrack.html">Login di sini</a></p>
+        <p class="login-hint">Sudah punya akun? <a href="{{ route('login') }}">Login di sini</a></p>
 
         <hr class="divider">
 
@@ -138,7 +108,4 @@
 
 </div>
 
-<script src="{{ asset('js/registrasi.js') }}"></script>
-
-</body>
-</html>
+@endsection
