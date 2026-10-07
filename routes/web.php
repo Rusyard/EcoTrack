@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 | Pratinjau tanpa login: tambahkan PRATINJAU_TANPA_LOGIN=true di .env lokal,
-| lalu jalankan php artisan config:clear. Hapus baris itu agar login wajib lagi.
+| lalu jalankan php artisan config:clear. Hapus/set false agar login wajib lagi.
 */
 $middleware = env('PRATINJAU_TANPA_LOGIN', false) ? [] : ['auth'];
 
@@ -23,17 +23,16 @@ Route::get('/registrasi', function () {
     return view('registrasi');
 })->name('registrasi');
 
-// --- Di-bypass sementara buat ngetes tanpa login ---
-Route::get('/form-laporan', function () {
-    return view('form_laporan');
-})->name('form.laporan');
-
 
 // ===== Halaman yang butuh login (semua role) =====
 Route::middleware($middleware)->group(function () {
 
     // --- Masyarakat ---
     Route::get('/beranda-masyarakat', [MasyarakatController::class, 'beranda'])->name('beranda.masyarakat');
+
+    Route::get('/form-laporan', function () {
+        return view('form_laporan');
+    })->name('form.laporan');
 
     // --- Petugas ---
     Route::get('/beranda-petugas', function () {
