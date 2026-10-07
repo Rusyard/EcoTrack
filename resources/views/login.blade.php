@@ -1,23 +1,14 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EcoTrack - Login</title>
-<link rel="stylesheet" href="{{ asset('css/login.css') }}">
-</head>
-<body>
+@extends('layout.app')
+
+@section('title', $judul)
+@section('css', 'resources/css/login.css')
+@section('js', 'resources/js/login.js')
+
+@section('content')
 
   <div class="login-wrapper">
-    <div class="logo-icon">
-      <!-- ikon daun -->
-      <svg viewBox="0 0 24 24">
-        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
-      </svg>
-    </div>
 
-    <h1 class="brand">EcoTrack</h1>
-    <p class="tagline">Manajemen keberlanjutan dan efisiensi limbah terpadu</p>
+    @include('partials.brand_login', ['brand' => $brand, 'tagline' => $tagline])
 
     <div class="login-card">
       <form id="loginForm" method="POST" action="{{ route('login.post') }}">
@@ -31,7 +22,7 @@
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
-            <input type="text" id="username" name="identifier" placeholder="Masukkan username (masyarakat) atau NIP (petugas/dinas)"  value ="{{ old('identifier') }}" required>
+            <input type="text" id="username" name="identifier" placeholder="Masukkan username (masyarakat) atau NIP (petugas/dinas)" value="{{ old('identifier') }}" required>
           </div>
           <div class="error-text" id="errorText">ID tidak ditemukan. Periksa kembali username atau NIP Anda.</div>
         </div>
@@ -85,7 +76,4 @@
     </div>
   </div>
 
-  <script src="{{ asset('js/login.js') }}"></script>
-
-</body>
-</html>
+@endsection
