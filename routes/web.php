@@ -1,7 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MasyarakatController;
 use Illuminate\Support\Facades\Route;
+
+/*
+| Pratinjau tanpa login: tambahkan PRATINJAU_TANPA_LOGIN=true di .env lokal,
+| lalu jalankan php artisan config:clear. Hapus baris itu agar login wajib lagi.
+*/
+$middleware = env('PRATINJAU_TANPA_LOGIN', false) ? [] : ['auth'];
 
 // ===== Halaman umum =====
 Route::get('/', function () {
@@ -16,18 +23,17 @@ Route::get('/registrasi', function () {
     return view('registrasi');
 })->name('registrasi');
 
+// --- Di-bypass sementara buat ngetes tanpa login ---
+Route::get('/form-laporan', function () {
+    return view('form_laporan');
+})->name('form.laporan');
+
 
 // ===== Halaman yang butuh login (semua role) =====
-Route::middleware('auth')->group(function () {
+Route::middleware($middleware)->group(function () {
 
     // --- Masyarakat ---
-    Route::get('/beranda-masyarakat', function () {
-        return view('beranda_masyarakat');
-    })->name('beranda.masyarakat');
-
-    Route::get('/form-laporan', function () {
-        return view('form_laporan');
-    })->name('form.laporan');
+    Route::get('/beranda-masyarakat', [MasyarakatController::class, 'beranda'])->name('beranda.masyarakat');
 
     // --- Petugas ---
     Route::get('/beranda-petugas', function () {
@@ -35,7 +41,6 @@ Route::middleware('auth')->group(function () {
     })->name('beranda.petugas');
 
     Route::get('/detail-tugas/{id}', function ($id) {
-        // Data dummy sementara - nanti diganti ambil dari tabel jadwal_pengangkutan berdasarkan $id
         $dummy = [
             1 => [
                 'tps_target' => 'TPS Taman Kota',
