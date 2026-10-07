@@ -1,30 +1,16 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EcoTrack - Formulir Pelaporan Kondisi TPS</title>
-<link rel="stylesheet" href="{{ asset('css/form_laporan.css') }}">
-</head>
-<body>
+@extends('layout.app')
 
-  <div class="topbar">
-    <a href="{{ route('beranda.masyarakat') }}" class="back-link">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
-      Kembali
-    </a>
-    <div class="divider-v"></div>
-    <div class="brand">
-      <div class="brand-logo">
-        <svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.9.66c.38-1 1.9-4.5 3.9-6.5C11 15 14 15 17 12c2.5-2.5 3-7 3-7s-4.5-.5-3 3Z"/></svg>
-      </div>
-      EcoTrack
-    </div>
-  </div>
+@section('title', $judul)
+@section('css', 'resources/css/form_laporan.css')
+@section('js', 'resources/js/form_laporan.js')
+
+@section('content')
+
+  @include('partials.topbar_form', ['kembali' => $kembali])
 
   <div class="main">
-    <h1 class="page-title">Formulir Pelaporan Kondisi TPS</h1>
-    <p class="page-desc">Laporkan kondisi TPS yang membutuhkan perhatian segera dari Dinas Kebersihan.</p>
+    <h1 class="page-title">{{ $judulHalaman }}</h1>
+    <p class="page-desc">{{ $deskripsiHalaman }}</p>
 
     <form id="reportForm">
 
@@ -36,53 +22,9 @@
         </div>
 
         <div class="location-grid">
-          <label class="location-option">
-            <input type="radio" name="lokasi" value="TPS Taman Kota">
-            <div class="location-card">
-              <div class="location-name">TPS Taman Kota</div>
-              <div class="location-addr">Jl. Pahlawan No. 12, Kartoharjo</div>
-            </div>
-          </label>
-
-          <label class="location-option">
-            <input type="radio" name="lokasi" value="TPS Pasar Besar">
-            <div class="location-card">
-              <div class="location-name">TPS Pasar Besar</div>
-              <div class="location-addr">Jl. Sulawesi No. 5, Manguharjo</div>
-            </div>
-          </label>
-
-          <label class="location-option">
-            <input type="radio" name="lokasi" value="TPS Nambangan">
-            <div class="location-card">
-              <div class="location-name">TPS Nambangan</div>
-              <div class="location-addr">Jl. Nambangan Lor No. 8, Manguharjo</div>
-            </div>
-          </label>
-
-          <label class="location-option">
-            <input type="radio" name="lokasi" value="TPS Pandean">
-            <div class="location-card">
-              <div class="location-name">TPS Pandean</div>
-              <div class="location-addr">Jl. Pandean No. 3, Taman</div>
-            </div>
-          </label>
-
-          <label class="location-option">
-            <input type="radio" name="lokasi" value="TPS Oro-Oro Ombo">
-            <div class="location-card">
-              <div class="location-name">TPS Oro-Oro Ombo</div>
-              <div class="location-addr">Jl. Kalimantan No. 11, Kartoharjo</div>
-            </div>
-          </label>
-
-          <label class="location-option">
-            <input type="radio" name="lokasi" value="TPS Kejuron">
-            <div class="location-card">
-              <div class="location-name">TPS Kejuron</div>
-              <div class="location-addr">Jl. Mastrip No. 7, Manguharjo</div>
-            </div>
-          </label>
+          @foreach ($daftarTps as $tps)
+            @include('partials.lokasi_option', ['tps' => $tps])
+          @endforeach
         </div>
       </div>
 
@@ -117,14 +59,11 @@
       </div>
 
       <div class="actions">
-        <button type="button" class="btn btn-cancel" onclick="window.location.href='dashboard-ecotrack.html'">Batal</button>
+        <button type="button" class="btn btn-cancel" id="btnBatal" data-href="{{ $kembali }}">Batal</button>
         <button type="submit" class="btn btn-submit">Kirim Laporan</button>
       </div>
 
     </form>
   </div>
 
-  <script src="{{ asset('js/form_laporan.js') }}"></script>
-
-</body>
-</html>
+@endsection

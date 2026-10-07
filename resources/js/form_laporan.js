@@ -50,3 +50,11 @@ document.getElementById('reportForm').addEventListener('submit', function(e) {
   }
   alert('Laporan siap dikirim ke server.');
 });
+
+// Tombol Batal: kembali ke halaman asal (alamatnya dikirim dari controller lewat data-href)
+const btnBatal = document.getElementById('btnBatal');
+if (btnBatal) {
+  btnBatal.addEventListener('click', () => {
+    window.location.href = btnBatal.dataset.href;
+  });
+}

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LaporanController;
 use Illuminate\Support\Facades\Route;
 
 // ===== Halaman umum =====
@@ -17,9 +18,7 @@ Route::get('/registrasi', function () {
 })->name('registrasi');
 
 // --- Di-bypass sementara buat ngetes tanpa login ---
-Route::get('/form-laporan', function () {
-    return view('form_laporan');
-})->name('form.laporan');
+Route::get('/form-laporan', [LaporanController::class, 'create'])->name('form.laporan');
 
 
 // ===== Halaman yang butuh login (semua role) =====
