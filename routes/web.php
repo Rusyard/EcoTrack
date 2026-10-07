@@ -16,6 +16,11 @@ Route::get('/registrasi', function () {
     return view('registrasi');
 })->name('registrasi');
 
+// --- Di-bypass sementara buat ngetes tanpa login ---
+Route::get('/form-laporan', function () {
+    return view('form_laporan');
+})->name('form.laporan');
+
 
 // ===== Halaman yang butuh login (semua role) =====
 Route::middleware('auth')->group(function () {
@@ -25,17 +30,12 @@ Route::middleware('auth')->group(function () {
         return view('beranda_masyarakat');
     })->name('beranda.masyarakat');
 
-    Route::get('/form-laporan', function () {
-        return view('form_laporan');
-    })->name('form.laporan');
-
     // --- Petugas ---
     Route::get('/beranda-petugas', function () {
         return view('beranda_petugas');
     })->name('beranda.petugas');
 
     Route::get('/detail-tugas/{id}', function ($id) {
-        // Data dummy sementara - nanti diganti ambil dari tabel jadwal_pengangkutan berdasarkan $id
         $dummy = [
             1 => [
                 'tps_target' => 'TPS Taman Kota',
