@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PetugasController;
+use App\Http\Controllers\TugasController;
 use Illuminate\Support\Facades\Route;
 
 // ===== Halaman umum =====
@@ -35,42 +36,27 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:masyarakat')
         ->name('form.laporan.store');
 
+    // Halaman detail before/after punya masyarakat sendiri, dibuka dari
+    // tombol "Detail" di histori laporan (beranda-masyarakat). Pengecekan
+    // "ini laporan dia sendiri atau bukan" dilakukan di controller, bukan
+    // cuma lewat middleware role, supaya satu masyarakat tidak bisa intip
+    // laporan masyarakat lain cuma dengan ganti angka id di URL.
+    Route::get('/laporan/{laporan}/detail', [LaporanController::class, 'detailSaya'])
+        ->middleware('role:masyarakat')
+        ->name('laporan.detail');
+
     // --- Petugas ---
     Route::get('/beranda-petugas', function () {
         return view('beranda_petugas');
     })->name('beranda.petugas');
 
-    Route::get('/detail-tugas/{id}', function ($id) {
-        // Data dummy sementara - nanti diganti ambil dari tabel jadwal_pengangkutan berdasarkan $id
-        $dummy = [
-            1 => [
-                'tps_target' => 'TPS Taman Kota',
-                'alamat' => 'Jl. Pahlawan No. 12, Kartoharjo',
-                'tanggal' => '2026-06-01',
-                'jam' => '09:00',
-                'kapasitas' => 85,
-                'instruksi' => 'Prioritas tinggi - sudah 2 hari menumpuk. Gunakan truk kapasitas besar.',
-                'status_saat_ini' => 'Sedang Diproses',
-                'id_jadwal' => 'SCH001',
-                'jenis_tugas' => 'Mendesak',
-            ],
-            2 => [
-                'tps_target' => 'TPS Nambangan',
-                'alamat' => 'Jl. Nambangan Lor No. 8, Manguharjo',
-                'tanggal' => '2026-06-01',
-                'jam' => '11:00',
-                'kapasitas' => 92,
-                'instruksi' => 'TPS penuh total, segera angkut. Perhatikan keamanan lalu lintas.',
-                'status_saat_ini' => 'Belum Diangkut',
-                'id_jadwal' => 'SCH002',
-                'jenis_tugas' => 'Mendesak',
-            ],
-        ];
+    Route::middleware('role:petugas')->group(function () {
+        Route::get('/detail-tugas/{jadwal}', [TugasController::class, 'show'])
+            ->name('detail.tugas.petugas');
 
-        $data = $dummy[$id] ?? $dummy[1];
-
-        return view('detail_tugas_petugas', $data);
-    })->name('detail.tugas.petugas');
+        Route::post('/detail-tugas/{jadwal}/selesai', [TugasController::class, 'selesaikan'])
+            ->name('detail.tugas.selesai');
+    });
 
     // --- Dinas (Admin) ---
     Route::get('/beranda-dinas', function () {
@@ -79,9 +65,18 @@ Route::middleware('auth')->group(function () {
 
     // Halaman ini menampilkan data pribadi pelapor (nama) dan foto laporan,
     // jadi dibatasi dinas saja — sama seperti halaman Data Petugas.
-    Route::get('/laporan-masuk-dinas', [LaporanController::class, 'index'])
-        ->middleware('role:dinas')
-        ->name('laporan.masuk.dinas');
+    Route::middleware('role:dinas')->group(function () {
+        Route::get('/laporan-masuk-dinas', [LaporanController::class, 'index'])
+            ->name('laporan.masuk.dinas');
+
+        // Halaman before/after + tombol "Konfirmasi & Tutup Laporan",
+        // dibuka dari tombol "Validasi" di tabel Laporan Masuk.
+        Route::get('/laporan-masuk-dinas/{laporan}/validasi', [LaporanController::class, 'tampilkanValidasi'])
+            ->name('laporan.validasi.show');
+
+        Route::post('/laporan-masuk-dinas/{laporan}/validasi', [LaporanController::class, 'validasi'])
+            ->name('laporan.validasi');
+    });
 
     Route::get('/jadwal-pengangkutan-dinas', function () {
         return view('jadwal_pengangkutan_dinas');

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Laporan extends Model
 {
@@ -20,6 +21,7 @@ class Laporan extends Model
         'tanggal_lapor',
         'deskripsi',
         'foto_url',
+        'foto_sesudah',
         'prioritas',
         'status',
     ];
@@ -41,10 +43,33 @@ class Laporan extends Model
     protected function fotoUrl(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value) => $value === null
-                ? null
-                : (str_starts_with($value, 'http') ? $value : asset('storage/'.$value)),
+            get: fn (?string $value) => static::normalisasiUrlFoto($value),
         );
+    }
+
+    /**
+     * Foto "sesudah" yang diunggah petugas lewat form Update Status,
+     * dipakai bareng foto_url di halaman detail before/after. Null
+     * selama petugas belum menyelesaikan & mengunggah foto buktinya.
+     */
+    protected function fotoSesudah(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => static::normalisasiUrlFoto($value),
+        );
+    }
+
+    /**
+     * Dipakai dua accessor di atas, supaya logic "Cloudinary vs path
+     * lokal lama" cuma ada di satu tempat.
+     */
+    private static function normalisasiUrlFoto(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return str_starts_with($value, 'http') ? $value : asset('storage/'.$value);
     }
 
     /**
@@ -63,5 +88,17 @@ class Laporan extends Model
     public function pelapor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'pelapor_id');
+    }
+
+    /**
+     * Jadwal pengangkutan yang dibuat dinas buat laporan ini (kalau
+     * sudah dijadwalkan). Dipakai buat tahu siapa petugasnya & kapan,
+     * di halaman detail before/after.
+     *
+     * @return HasOne<JadwalPengangkutan, $this>
+     */
+    public function jadwalPengangkutan(): HasOne
+    {
+        return $this->hasOne(JadwalPengangkutan::class, 'laporan_id');
     }
 }

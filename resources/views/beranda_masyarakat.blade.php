@@ -403,6 +403,10 @@
     </div>
     
     <div class="nav-right">
+      <div class="icon-btn">
+        <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-dot"></span>
+      </div>
       <div class="user-chip">
         <div class="avatar">{{ strtoupper(substr(Auth::user()->nama_lengkap, 0, 1)) }}</div>
         {{ explode(' ', Auth::user()->nama_lengkap)[0] }}
@@ -499,7 +503,7 @@
               <td>{{ $laporan->tps->nama_tps }}</td>
               <td class="desc-cell">{{ Str::limit($laporan->deskripsi, 80) }}</td>
               <td><span class="status-pill {{ $statusInfo['kelas'] }}">{{ $statusInfo['label'] }}</span></td>
-              <td><a href="#" class="detail-link">Detail ›</a></td>
+              <td><a href="{{ route('laporan.detail', $laporan) }}" class="detail-link">Detail ›</a></td>
             </tr>
           @empty
             <tr>

@@ -4,16 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Laporan;
 use App\Models\Tps;
+use App\Traits\UnggahFotoKeCloudinary;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class LaporanController extends Controller
 {
+    use UnggahFotoKeCloudinary;
+
     /**
      * Beranda masyarakat: ringkasan jumlah laporan (total/proses/selesai)
      * dan histori laporan milik user yang sedang login saja (bukan
@@ -77,7 +77,7 @@ class LaporanController extends Controller
         // anggota tim & siapa pun yang buka halaman dinas bisa lihat foto
         // yang sama, bukan cuma foto yang ada di laptop pengunggah.
         $fotoUrl = $request->hasFile('foto')
-            ? $this->unggahFotoKeCloudinary($request->file('foto'))
+            ? $this->unggahFotoKeCloudinary($request->file('foto'), 'laporan', 'foto')
             : null;
 
         // kode_laporan di-generate di sini (bukan diisi user), jadi dicoba
@@ -109,51 +109,6 @@ class LaporanController extends Controller
     }
 
     /**
-     * Upload foto ke Cloudinary lewat signed upload (API secret dipakai
-     * di server, tidak pernah dikirim ke browser), lalu kembalikan URL
-     * publiknya buat disimpan di kolom foto_url.
-     */
-    private function unggahFotoKeCloudinary(UploadedFile $file): string
-    {
-        $cloudName = config('services.cloudinary.cloud_name');
-        $apiKey = config('services.cloudinary.api_key');
-        $apiSecret = config('services.cloudinary.api_secret');
-
-        if (! $cloudName || ! $apiKey || ! $apiSecret) {
-            throw ValidationException::withMessages([
-                'foto' => 'Upload foto belum dikonfigurasi di server (CLOUDINARY_* belum diisi di .env).',
-            ]);
-        }
-
-        $timestamp = time();
-        $folder = 'laporan';
-
-        // Signature Cloudinary: semua parameter SELAIN file, api_key, dan
-        // signature, diurutkan alfabetis sebagai key=value&key=value,
-        // ditempel api_secret di akhir, lalu di-SHA1.
-        $stringUntukDitandatangani = "folder={$folder}&timestamp={$timestamp}{$apiSecret}";
-        $signature = sha1($stringUntukDitandatangani);
-
-        $response = Http::attach('file', fopen($file->getRealPath(), 'r'), $file->getClientOriginalName())
-            ->post("https://api.cloudinary.com/v1_1/{$cloudName}/image/upload", [
-                'api_key'   => $apiKey,
-                'timestamp' => $timestamp,
-                'folder'    => $folder,
-                'signature' => $signature,
-            ]);
-
-        if ($response->failed()) {
-            report(new \RuntimeException('Upload Cloudinary gagal: '.$response->body()));
-
-            throw ValidationException::withMessages([
-                'foto' => 'Gagal mengunggah foto, silakan coba lagi.',
-            ]);
-        }
-
-        return $response->json('secure_url');
-    }
-
-    /**
      * Halaman "Laporan Masuk" dinas: daftar semua laporan masyarakat
      * beserta foto yang diunggah (sebelumnya tabel ini statis/hardcode).
      */
@@ -166,6 +121,56 @@ class LaporanController extends Controller
         return view('laporan_masuk_dinas', [
             'laporan' => $laporan,
         ]);
+    }
+
+    /**
+     * Halaman detail before/after buat masyarakat (dibuka dari tombol
+     * "Detail" di histori laporannya sendiri). Foto "sebelum" dari
+     * foto_url (diunggah masyarakat), foto "sesudah" dari foto_sesudah
+     * (diunggah petugas lewat form Update Status) kalau sudah ada.
+     */
+    public function detailSaya(Request $request, Laporan $laporan): View
+    {
+        // Jangan sampai masyarakat A bisa lihat detail laporan masyarakat B
+        // cuma dengan ganti angka di URL.
+        if ($laporan->pelapor_id !== $request->user()->id) {
+            abort(403, 'Anda tidak memiliki akses ke laporan ini.');
+        }
+
+        $laporan->load(['tps', 'jadwalPengangkutan.petugas']);
+
+        return view('detail_laporan_masyarakat', [
+            'laporan' => $laporan,
+        ]);
+    }
+
+    /**
+     * Halaman validasi dinas: before/after yang sama seperti punya
+     * masyarakat, ditambah tombol "Konfirmasi & Tutup Laporan" yang
+     * mengubah status laporan jadi selesai.
+     */
+    public function tampilkanValidasi(Laporan $laporan): View
+    {
+        $laporan->load(['tps', 'pelapor', 'jadwalPengangkutan.petugas']);
+
+        return view('validasi_laporan_dinas', [
+            'laporan' => $laporan,
+        ]);
+    }
+
+    /**
+     * Konfirmasi dinas bahwa laporan beneran sudah ditangani, baru
+     * statusnya resmi jadi "selesai" (sebelum ini, walau petugas sudah
+     * kirim foto sesudah, laporan masih berstatus "dijadwalkan" sampai
+     * divalidasi dinas).
+     */
+    public function validasi(Laporan $laporan): RedirectResponse
+    {
+        $laporan->update(['status' => 'selesai']);
+
+        return redirect()
+            ->route('laporan.masuk.dinas')
+            ->with('success', "Laporan {$laporan->kode_laporan} berhasil ditutup.");
     }
 
     /**

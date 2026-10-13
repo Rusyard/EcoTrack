@@ -687,7 +687,7 @@
                 @if ($l->status === 'selesai')
                   <span class="done-label">✓ Selesai</span>
                 @elseif ($l->status === 'dijadwalkan')
-                  <button class="action-btn validasi">Validasi</button>
+                  <a href="{{ route('laporan.validasi.show', $l) }}" class="action-btn validasi" style="text-decoration:none; display:inline-block;">Validasi</a>
                 @else
                   <button class="action-btn jadwalkan">Jadwalkan</button>
                 @endif
