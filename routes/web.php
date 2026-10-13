@@ -6,6 +6,9 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\MasyarakatController;
 use App\Http\Controllers\PetugasController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ShuttleController;
+
+Route::resource('shuttles', ShuttleController::class);
 
 // ===== Halaman umum =====
 Route::get('/', [AuthController::class, 'welcome'])->name('welcome');
