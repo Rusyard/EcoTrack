@@ -1,9 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\JadwalPengangkutanController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PetugasController;
 use Illuminate\Support\Facades\Route;
+
+// Mode pratinjau: isi PRATINJAU_TANPA_LOGIN=true di .env lokal agar halaman
+// bisa dibuka tanpa login. Kalau tidak diisi, perilaku route sama seperti biasa.
+$middleware = env('PRATINJAU_TANPA_LOGIN', false) ? [] : ['auth'];
 
 // ===== Halaman umum =====
 Route::get('/', function () {
@@ -22,7 +27,7 @@ Route::post('/registrasi', [AuthController::class, 'register'])
 
 
 // ===== Halaman yang butuh login (semua role) =====
-Route::middleware('auth')->group(function () {
+Route::middleware($middleware)->group(function () {
 
     // --- Masyarakat ---
     Route::get('/beranda-masyarakat', [LaporanController::class, 'beranda'])->name('beranda.masyarakat');
@@ -83,9 +88,7 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:dinas')
         ->name('laporan.masuk.dinas');
 
-    Route::get('/jadwal-pengangkutan-dinas', function () {
-        return view('jadwal_pengangkutan_dinas');
-    })->name('jadwal.pengangkutan.dinas');
+    Route::get('/jadwal-pengangkutan-dinas', [JadwalPengangkutanController::class, 'index'])->name('jadwal.pengangkutan.dinas');
 
     // Halaman ini menampilkan data pribadi petugas (NIP, kontak), dan
     // hanya dinas yang boleh menambah akun petugas baru, jadi GET & POST
