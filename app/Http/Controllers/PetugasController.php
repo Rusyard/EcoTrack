@@ -27,6 +27,10 @@ class PetugasController extends Controller
             'jumlahBertugas'   => $petugas->where('status', 'bertugas')->count(),
             'jumlahCuti'       => $petugas->where('status', 'cuti')->count(),
             'jumlahNonaktif'   => $petugas->where('status', 'nonaktif')->count(),
+
+            'daftarWilayah'    => ['Kartoharjo', 'Manguharjo', 'Taman'],
+            'tanggal'          => now()->locale('id')->isoFormat('dddd, DD MMMM YYYY'),
+            'tpsKritis'        => 2,
         ]);
     }
 

@@ -5,6 +5,12 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PetugasController;
 use Illuminate\Support\Facades\Route;
 
+// Mode pratinjau: isi PRATINJAU_TANPA_LOGIN=true di .env lokal agar halaman
+// bisa dibuka tanpa login. Kalau tidak diisi, perilaku route sama seperti biasa.
+$pratinjau  = (bool) env('PRATINJAU_TANPA_LOGIN', false);
+$middleware = $pratinjau ? [] : ['auth'];
+$roleDinas  = $pratinjau ? [] : ['role:dinas'];
+
 // ===== Halaman umum =====
 Route::get('/', function () {
     return view('welcome');
@@ -22,7 +28,7 @@ Route::post('/registrasi', [AuthController::class, 'register'])
 
 
 // ===== Halaman yang butuh login (semua role) =====
-Route::middleware('auth')->group(function () {
+Route::middleware($middleware)->group(function () use ($roleDinas) {
 
     // --- Masyarakat ---
     Route::get('/beranda-masyarakat', [LaporanController::class, 'beranda'])->name('beranda.masyarakat');
@@ -90,7 +96,7 @@ Route::middleware('auth')->group(function () {
     // Halaman ini menampilkan data pribadi petugas (NIP, kontak), dan
     // hanya dinas yang boleh menambah akun petugas baru, jadi GET & POST
     // dua-duanya dibatasi role:dinas.
-    Route::middleware('role:dinas')->group(function () {
+    Route::middleware($roleDinas)->group(function () {
         Route::get('/keloladata-petugas-dinas', [PetugasController::class, 'index'])
             ->name('keloladata.petugas.dinas');
 
