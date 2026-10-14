@@ -62,4 +62,12 @@ class JadwalPengangkutan extends Model
     {
         return $this->belongsTo(User::class, 'petugas_id');
     }
+
+    /**
+     * @return BelongsTo<Kendaraan, $this>
+     */
+    public function kendaraan(): BelongsTo
+    {
+        return $this->belongsTo(Kendaraan::class, 'kendaraan_id');
+    }
 }

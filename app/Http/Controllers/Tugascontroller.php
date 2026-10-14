@@ -13,6 +13,35 @@ class TugasController extends Controller
     use UnggahFotoKeCloudinary;
 
     /**
+     * Beranda petugas: daftar tugas pengangkutan milik petugas yang
+     * sedang login (sebelumnya 2 kartu tugas di halaman ini hardcode).
+     * Dipisah "Hari Ini" & "Besok" sesuai 2 tab yang sudah ada di Blade.
+     * Tugas yang sudah "selesai"/"dibatalkan" tidak ditampilkan di
+     * daftar supaya petugas cuma lihat tugas yang masih perlu dikerjakan.
+     */
+    public function beranda(Request $request): View
+    {
+        $petugasId = $request->user()->id;
+
+        $tugasAktif = JadwalPengangkutan::with(['tps', 'laporan'])
+            ->where('petugas_id', $petugasId)
+            ->whereIn('status', ['terjadwal', 'berjalan'])
+            ->orderBy('waktu')
+            ->get();
+
+        $tugasHariIni = $tugasAktif->filter(fn (JadwalPengangkutan $j) => $j->tanggal->isToday())->values();
+        $tugasBesok = $tugasAktif->filter(fn (JadwalPengangkutan $j) => $j->tanggal->isTomorrow())->values();
+
+        return view('beranda_petugas', [
+            'tugasHariIni'   => $tugasHariIni,
+            'tugasBesok'     => $tugasBesok,
+            'jumlahSelesai'  => JadwalPengangkutan::where('petugas_id', $petugasId)->where('status', 'selesai')->count(),
+            'jumlahDiproses' => JadwalPengangkutan::where('petugas_id', $petugasId)->where('status', 'berjalan')->count(),
+            'jumlahTertunda' => JadwalPengangkutan::where('petugas_id', $petugasId)->where('status', 'terjadwal')->count(),
+        ]);
+    }
+
+    /**
      * Detail satu tugas pengangkutan milik petugas yang sedang login
      * (sebelumnya halaman ini pakai data dummy hardcode di route).
      */

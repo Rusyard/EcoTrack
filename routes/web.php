@@ -21,6 +21,19 @@ Route::post('/registrasi', [AuthController::class, 'register'])
     ->middleware('throttle:6,1')
     ->name('registrasi.post');
 
+// ===== Lupa password =====
+Route::get('/lupa-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+// throttle: maks 3 percobaan per menit per IP, biar kotak email orang lain
+// tidak bisa dibanjiri link reset cuma dengan ngisi form berkali-kali.
+Route::post('/lupa-password', [AuthController::class, 'sendResetLink'])
+    ->middleware('throttle:3,1')
+    ->name('password.email');
+
+Route::get('/reset-password/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])
+    ->middleware('throttle:6,1')
+    ->name('password.update');
+
 
 // ===== Halaman yang butuh login (semua role) =====
 Route::middleware('auth')->group(function () {
@@ -46,11 +59,9 @@ Route::middleware('auth')->group(function () {
         ->name('laporan.detail');
 
     // --- Petugas ---
-    Route::get('/beranda-petugas', function () {
-        return view('beranda_petugas');
-    })->name('beranda.petugas');
-
     Route::middleware('role:petugas')->group(function () {
+        Route::get('/beranda-petugas', [TugasController::class, 'beranda'])->name('beranda.petugas');
+
         Route::get('/detail-tugas/{jadwal}', [TugasController::class, 'show'])
             ->name('detail.tugas.petugas');
 
@@ -76,6 +87,11 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/laporan-masuk-dinas/{laporan}/validasi', [LaporanController::class, 'validasi'])
             ->name('laporan.validasi');
+
+        // Modal "Buat Instruksi Jadwal Pengangkutan", dibuka dari tombol
+        // "Jadwalkan" di tabel Laporan Masuk (laporan berstatus "menunggu").
+        Route::post('/laporan-masuk-dinas/{laporan}/jadwalkan', [LaporanController::class, 'jadwalkan'])
+            ->name('laporan.jadwalkan');
     });
 
     Route::get('/jadwal-pengangkutan-dinas', function () {

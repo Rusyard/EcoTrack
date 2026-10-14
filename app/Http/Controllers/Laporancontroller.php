@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JadwalPengangkutan;
+use App\Models\Kendaraan;
 use App\Models\Laporan;
 use App\Models\Tps;
+use App\Models\User;
 use App\Traits\UnggahFotoKeCloudinary;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class LaporanController extends Controller
@@ -119,8 +123,94 @@ class LaporanController extends Controller
             ->get();
 
         return view('laporan_masuk_dinas', [
-            'laporan' => $laporan,
+            'laporan'       => $laporan,
+            // Dipakai buat dropdown "Petugas yang Ditugaskan" di modal
+            // Jadwalkan. Petugas yang cuti/nonaktif sengaja tidak
+            // ditampilkan supaya dinas tidak salah menugaskan orang yang
+            // sedang tidak bisa bertugas.
+            'daftarPetugas' => User::where('role', 'petugas')
+                ->whereIn('status', ['aktif', 'bertugas'])
+                ->orderBy('nama_lengkap')
+                ->get(),
         ]);
+    }
+
+    /**
+     * Dinas menjadwalkan laporan "menunggu" ke petugas tertentu (modal
+     * "Buat Instruksi Jadwal Pengangkutan"). Bikin record jadwal_pengangkutan
+     * baru, ubah status laporan jadi "dijadwalkan" — begitu disimpan,
+     * tugas ini otomatis nongol di beranda petugas yang ditugaskan
+     * (lihat TugasController::beranda).
+     */
+    public function jadwalkan(Request $request, Laporan $laporan): RedirectResponse
+    {
+        if ($laporan->status !== 'menunggu') {
+            throw ValidationException::withMessages([
+                'petugas_id' => 'Laporan ini sudah dijadwalkan/ditangani sebelumnya.',
+            ]);
+        }
+
+        $validated = $request->validate([
+            'petugas_id' => ['bail', 'required', 'integer', 'exists:users,id'],
+            'tanggal'    => ['bail', 'required', 'date', 'after_or_equal:today'],
+            'waktu'      => ['bail', 'required', 'date_format:H:i'],
+            'catatan'    => ['nullable', 'string', 'max:1000'],
+        ], [
+            'petugas_id.required' => 'Petugas yang ditugaskan wajib dipilih.',
+            'petugas_id.exists'   => 'Petugas tidak ditemukan.',
+            'tanggal.required'    => 'Tanggal pengangkutan wajib diisi.',
+            'tanggal.after_or_equal' => 'Tanggal pengangkutan tidak boleh di masa lalu.',
+            'waktu.required'      => 'Jam pengangkutan wajib diisi.',
+            'waktu.date_format'   => 'Format jam tidak valid.',
+        ]);
+
+        // Dipastikan yang dipilih beneran petugas (bukan masyarakat/dinas
+        // yang id-nya ditebak lewat request manual).
+        $petugas = User::where('id', $validated['petugas_id'])->where('role', 'petugas')->first();
+        if (! $petugas) {
+            throw ValidationException::withMessages([
+                'petugas_id' => 'Petugas tidak valid.',
+            ]);
+        }
+
+        // Kendaraan dipilih otomatis (yang pertama "tersedia") karena
+        // modal ini sengaja tidak menampilkan pilihan kendaraan ke dinas —
+        // biar alurnya sesimpel mockup-nya. Kalau tidak ada yang kosong,
+        // dinas diminta tunggu ada kendaraan yang available dulu.
+        $kendaraan = Kendaraan::where('status', 'tersedia')->first();
+        if (! $kendaraan) {
+            throw ValidationException::withMessages([
+                'petugas_id' => 'Semua kendaraan sedang digunakan/perbaikan, belum bisa menjadwalkan dulu.',
+            ]);
+        }
+
+        for ($percobaan = 1; $percobaan <= 3; $percobaan++) {
+            try {
+                JadwalPengangkutan::create([
+                    'kode_jadwal'  => $this->kodeJadwalBerikutnya(),
+                    'laporan_id'   => $laporan->id,
+                    'tps_id'       => $laporan->tps_id,
+                    'petugas_id'   => $petugas->id,
+                    'kendaraan_id' => $kendaraan->id,
+                    'tanggal'      => $validated['tanggal'],
+                    'waktu'        => $validated['waktu'],
+                    'status'       => 'terjadwal',
+                    'catatan'      => $validated['catatan'] ?? null,
+                ]);
+                break;
+            } catch (UniqueConstraintViolationException $e) {
+                if ($percobaan === 3) {
+                    throw $e;
+                }
+            }
+        }
+
+        $kendaraan->update(['status' => 'digunakan']);
+        $laporan->update(['status' => 'dijadwalkan']);
+
+        return redirect()
+            ->route('laporan.masuk.dinas')
+            ->with('success', "Laporan {$laporan->kode_laporan} berhasil dijadwalkan ke {$petugas->nama_lengkap}.");
     }
 
     /**
@@ -186,5 +276,20 @@ class LaporanController extends Controller
         $nomorBerikutnya = $terakhir ? ((int) substr($terakhir, 3)) + 1 : 1;
 
         return 'RPT'.str_pad((string) $nomorBerikutnya, 3, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Kode berikutnya dengan pola JDW001, JDW002, dst, mengikuti pola
+     * yang sudah dipakai JadwalPengangkutanSeeder.
+     */
+    private function kodeJadwalBerikutnya(): string
+    {
+        $terakhir = JadwalPengangkutan::where('kode_jadwal', 'like', 'JDW%')
+            ->orderByRaw('CAST(SUBSTRING(kode_jadwal, 4) AS UNSIGNED) DESC')
+            ->value('kode_jadwal');
+
+        $nomorBerikutnya = $terakhir ? ((int) substr($terakhir, 3)) + 1 : 1;
+
+        return 'JDW'.str_pad((string) $nomorBerikutnya, 3, '0', STR_PAD_LEFT);
     }
 }

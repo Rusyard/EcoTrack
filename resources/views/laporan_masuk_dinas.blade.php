@@ -537,6 +537,134 @@
     height: 16px;
   }
 
+  /* ===== MODAL: JADWALKAN ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.6);
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 210;
+  }
+
+  .modal-overlay.is-open { display: flex; }
+
+  .modal-box {
+    width: 100%;
+    max-width: 440px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 26px 28px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .modal-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #111827;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af;
+    padding: 2px;
+  }
+
+  .modal-close svg { width: 18px; height: 18px; }
+
+  .modal-subtitle {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-bottom: 20px;
+  }
+
+  .modal-target-box {
+    background: #f0fdf4;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+  }
+
+  .modal-target-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #16a34a;
+    margin-bottom: 4px;
+  }
+
+  .modal-target-nama { font-weight: 700; color: #111827; font-size: 0.95rem; }
+  .modal-target-alamat { font-size: 0.82rem; color: #6b7280; margin-top: 2px; }
+
+  .modal-field { margin-bottom: 18px; }
+
+  .modal-field label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 7px;
+  }
+
+  .modal-field select,
+  .modal-field input,
+  .modal-field textarea {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: #111827;
+  }
+
+  .modal-field select:focus,
+  .modal-field input:focus,
+  .modal-field textarea:focus {
+    outline: none;
+    border-color: #1eb980;
+    box-shadow: 0 0 0 3px rgba(30, 185, 128, 0.15);
+  }
+
+  .modal-field textarea { resize: vertical; min-height: 70px; }
+
+  .modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .modal-error {
+    color: #dc2626;
+    font-size: 0.78rem;
+    margin-top: 6px;
+  }
+
+  .modal-actions { display: flex; gap: 12px; margin-top: 4px; }
+
+  .modal-btn-batal,
+  .modal-btn-kirim {
+    flex: 1;
+    border: none;
+    border-radius: 9px;
+    padding: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .modal-btn-batal { background: #f1f2f4; color: #374151; }
+  .modal-btn-kirim { background: #0f5c3f; color: #ffffff; }
+  .modal-btn-kirim:hover { background: #0c4a33; }
+
   @media (max-width: 760px) {
     .sidebar { display: none; }
     .table-card { overflow-x: auto; }
@@ -644,6 +772,12 @@
       <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    @if ($errors->any())
+      <div class="alert" style="background:#fef2f2; color:#b91c1c; border:1px solid #fecaca;">
+        {{ $errors->first() }}
+      </div>
+    @endif
+
     <!-- TABLE -->
     <div class="table-card">
       <table>
@@ -689,7 +823,11 @@
                 @elseif ($l->status === 'dijadwalkan')
                   <a href="{{ route('laporan.validasi.show', $l) }}" class="action-btn validasi" style="text-decoration:none; display:inline-block;">Validasi</a>
                 @else
-                  <button class="action-btn jadwalkan">Jadwalkan</button>
+                  <button
+                    type="button"
+                    class="action-btn jadwalkan"
+                    onclick="bukaModalJadwalkan({{ $l->id }}, '{{ $l->kode_laporan }}', @js($l->tps->nama_tps), @js($l->tps->alamat))"
+                  >Jadwalkan</button>
                 @endif
               </td>
             </tr>
@@ -713,6 +851,60 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
       <img id="lightboxImage" src="" alt="Foto laporan ukuran penuh">
+    </div>
+  </div>
+
+  <!-- MODAL: Buat Instruksi Jadwal Pengangkutan -->
+  <div class="modal-overlay" id="modalJadwalkanOverlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">Buat Instruksi Jadwal Pengangkutan</div>
+        <button type="button" class="modal-close" onclick="tutupModalJadwalkan()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-subtitle">Kirimkan tugas kepada petugas lapangan</div>
+
+      <div class="modal-target-box">
+        <div class="modal-target-label">TARGET TPS</div>
+        <div class="modal-target-nama" id="modalTargetNama"></div>
+        <div class="modal-target-alamat" id="modalTargetAlamat"></div>
+      </div>
+
+      <form id="formJadwalkan" method="POST" action="">
+        @csrf
+
+        <div class="modal-field">
+          <label for="modalPetugas">Petugas yang Ditugaskan</label>
+          <select id="modalPetugas" name="petugas_id" required>
+            <option value="" disabled selected>Pilih petugas...</option>
+            @foreach ($daftarPetugas as $petugas)
+              <option value="{{ $petugas->id }}">{{ $petugas->nama_lengkap }} — {{ $petugas->wilayah_tugas }}</option>
+            @endforeach
+          </select>
+        </div>
+
+        <div class="modal-row">
+          <div class="modal-field">
+            <label for="modalTanggal">Tanggal Pengangkutan</label>
+            <input type="date" id="modalTanggal" name="tanggal" required>
+          </div>
+          <div class="modal-field">
+            <label for="modalWaktu">Jam Pengangkutan</label>
+            <input type="time" id="modalWaktu" name="waktu" required>
+          </div>
+        </div>
+
+        <div class="modal-field">
+          <label for="modalCatatan">Catatan / Instruksi</label>
+          <textarea id="modalCatatan" name="catatan" placeholder="Instruksi khusus untuk petugas..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="modal-btn-batal" onclick="tutupModalJadwalkan()">Batal</button>
+          <button type="submit" class="modal-btn-kirim">Kirim Instruksi Ke Petugas</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -760,6 +952,39 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       tutupLightbox();
+      tutupModalJadwalkan();
+    }
+  });
+
+  // ===== Modal: Jadwalkan =====
+  const modalJadwalkanOverlay = document.getElementById('modalJadwalkanOverlay');
+  const formJadwalkan = document.getElementById('formJadwalkan');
+  const modalTargetNama = document.getElementById('modalTargetNama');
+  const modalTargetAlamat = document.getElementById('modalTargetAlamat');
+
+  // Dibuat dengan placeholder "0" lalu diganti JS, karena route()
+  // butuh model Laporan beneran padahal id-nya baru diketahui saat
+  // tombol "Jadwalkan" di-klik (satu modal dipakai bareng buat semua baris).
+  // Placeholder "0" ini ada di TENGAH url (".../0/jadwalkan"), bukan di
+  // ujung, jadi di-ganti pakai regex /\/0\// (bukan /\/0$/ yang gak akan
+  // pernah cocok karena url-nya tidak berakhiran "/0").
+  const urlJadwalkanTemplate = "{{ route('laporan.jadwalkan', ['laporan' => 0]) }}";
+
+  function bukaModalJadwalkan(laporanId, kodeLaporan, namaTps, alamatTps) {
+    modalTargetNama.textContent = namaTps;
+    modalTargetAlamat.textContent = alamatTps;
+    formJadwalkan.action = urlJadwalkanTemplate.replace('/0/', '/' + laporanId + '/');
+    formJadwalkan.reset();
+    modalJadwalkanOverlay.classList.add('is-open');
+  }
+
+  function tutupModalJadwalkan() {
+    modalJadwalkanOverlay.classList.remove('is-open');
+  }
+
+  modalJadwalkanOverlay.addEventListener('click', (e) => {
+    if (e.target === modalJadwalkanOverlay) {
+      tutupModalJadwalkan();
     }
   });
 </script>

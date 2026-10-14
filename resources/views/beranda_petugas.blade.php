@@ -447,117 +447,128 @@
 
       <div class="mini-stats">
         <div class="mini-stat">
-          <div class="mini-stat-value selesai">8</div>
+          <div class="mini-stat-value selesai">{{ $jumlahSelesai }}</div>
           <div class="mini-stat-label">Selesai</div>
         </div>
         <div class="mini-stat">
-          <div class="mini-stat-value diproses">1</div>
+          <div class="mini-stat-value diproses">{{ $jumlahDiproses }}</div>
           <div class="mini-stat-label">Diproses</div>
         </div>
         <div class="mini-stat">
-          <div class="mini-stat-value tertunda">1</div>
+          <div class="mini-stat-value tertunda">{{ $jumlahTertunda }}</div>
           <div class="mini-stat-label">Tertunda</div>
         </div>
       </div>
     </div>
 
     <div class="tabs">
-      <button id="tab-hari-ini" class="tab active" onclick="gantiTab('hari-ini')">Hari Ini (2 Tugas)</button>
-      <button id="tab-besok" class="tab inactive" onclick="gantiTab('besok')">Besok (1 Tugas)</button>
+      <button id="tab-hari-ini" class="tab active" onclick="gantiTab('hari-ini')">Hari Ini ({{ $tugasHariIni->count() }} Tugas)</button>
+      <button id="tab-besok" class="tab inactive" onclick="gantiTab('besok')">Besok ({{ $tugasBesok->count() }} Tugas)</button>
     </div>
   </div>
+
+  @php
+    $statusLabelPetugas = [
+        'terjadwal' => ['kelas' => 'status-belum', 'label' => 'Belum Diangkut'],
+        'berjalan'  => ['kelas' => 'status-proses', 'label' => 'Sedang Diproses'],
+    ];
+  @endphp
 
   <!-- MAIN -->
   <div class="main">
   <div id="konten-hari-ini">
     <div class="warning-line">
       <svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
-      TUGAS MENDESAK — PRIORITAS TINGGI
+      TUGAS HARI INI
     </div>
 
     <div class="task-list">
-      <a href="{{ route('detail.tugas.petugas', 1) }}" class="task-card" style="text-decoration:none; color:inherit;">
-        <div class="task-icon blue">
-          <svg viewBox="0 0 24 24"><path d="M14 18V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h1"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62L19 8h-4"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
-        </div>
-        <div class="task-body">
-          <div class="task-title-row">
-            <div class="task-title">TPS Taman Kota</div>
-            <span class="badge-mendesak">MENDESAK</span>
+      @forelse ($tugasHariIni as $jadwal)
+        @php
+          $mendesak = $jadwal->laporan && $jadwal->laporan->prioritas === 'mendesak';
+          $statusInfo = $statusLabelPetugas[$jadwal->status];
+        @endphp
+        <a href="{{ route('detail.tugas.petugas', $jadwal) }}" class="task-card" style="text-decoration:none; color:inherit;">
+          <div class="task-icon {{ $mendesak ? 'red' : 'blue' }}">
+            <svg viewBox="0 0 24 24"><path d="M14 18V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h1"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62L19 8h-4"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
           </div>
-          <div class="task-address">
-            <svg viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-            Jl. Pahlawan No. 12, Kartoharjo
-          </div>
-          <div class="task-note">"Prioritas tinggi - sudah 2 hari menumpuk. Gunakan truk kapasitas besar."</div>
-          <div class="task-footer">
-            <div class="task-time">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              09:00
+          <div class="task-body">
+            <div class="task-title-row">
+              <div class="task-title">{{ $jadwal->tps->nama_tps }}</div>
+              @if ($mendesak)
+                <span class="badge-mendesak">MENDESAK</span>
+              @endif
             </div>
-            <span class="status-pill status-proses">Sedang Diproses</span>
-          </div>
-        </div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-      </a>
-
-      <a href="{{ route('detail.tugas.petugas', 2) }}" class="task-card" style="text-decoration:none; color:inherit;">
-        <div class="task-icon red">
-          <svg viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-        </div>
-        <div class="task-body">
-          <div class="task-title-row">
-            <div class="task-title">TPS Nambangan</div>
-            <span class="badge-mendesak">MENDESAK</span>
-          </div>
-          <div class="task-address">
-            <svg viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-            Jl. Nambangan Lor No. 8, Manguharjo
-          </div>
-          <div class="task-note">"TPS penuh total, segera angkut. Perhatikan keamanan lalu lintas."</div>
-          <div class="task-footer">
-            <div class="task-time">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              11:00
+            <div class="task-address">
+              <svg viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              {{ $jadwal->tps->alamat }}
             </div>
-            <span class="status-pill status-belum">Belum Diangkut</span>
+            @if ($jadwal->catatan)
+              <div class="task-note">"{{ $jadwal->catatan }}"</div>
+            @endif
+            <div class="task-footer">
+              <div class="task-time">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                {{ \Illuminate\Support\Carbon::parse($jadwal->waktu)->format('H:i') }}
+              </div>
+              <span class="status-pill {{ $statusInfo['kelas'] }}">{{ $statusInfo['label'] }}</span>
+            </div>
           </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+      @empty
+        <div style="text-align:center; color:#9ca3af; padding:28px; background:#fff; border-radius:12px;">
+          Tidak ada tugas pengangkutan buat hari ini.
         </div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-      </a>
+      @endforelse
     </div>
   </div>
 
   <div id="konten-besok" style="display:none;">
     <div class="warning-line" style="color:#16a34a;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 18V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h1"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62L19 8h-4"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
-      JADWAL RUTIN
+      TUGAS BESOK
     </div>
 
     <div class="task-list">
-      <div class="task-card" style="border-left-color:#1eb980;">
-        <div class="task-icon green">
-          <svg viewBox="0 0 24 24" stroke="currentColor"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-        </div>
-        <div class="task-body">
-          <div class="task-title-row">
-            <div class="task-title">TPS Oro-Oro Ombo</div>
+      @forelse ($tugasBesok as $jadwal)
+        @php
+          $mendesak = $jadwal->laporan && $jadwal->laporan->prioritas === 'mendesak';
+          $statusInfo = $statusLabelPetugas[$jadwal->status];
+        @endphp
+        <a href="{{ route('detail.tugas.petugas', $jadwal) }}" class="task-card" style="text-decoration:none; color:inherit; {{ $mendesak ? '' : 'border-left-color:#1eb980;' }}">
+          <div class="task-icon {{ $mendesak ? 'red' : 'green' }}">
+            <svg viewBox="0 0 24 24" stroke="currentColor"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
           </div>
-          <div class="task-address">
-            <svg viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-            Jl. Kalimantan No. 11, Kartoharjo
-          </div>
-          <div class="task-note">"Pengangkutan rutin mingguan."</div>
-          <div class="task-footer">
-            <div class="task-time">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              08:00
+          <div class="task-body">
+            <div class="task-title-row">
+              <div class="task-title">{{ $jadwal->tps->nama_tps }}</div>
+              @if ($mendesak)
+                <span class="badge-mendesak">MENDESAK</span>
+              @endif
             </div>
-            <span class="status-pill status-belum">Belum Diangkut</span>
+            <div class="task-address">
+              <svg viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              {{ $jadwal->tps->alamat }}
+            </div>
+            @if ($jadwal->catatan)
+              <div class="task-note">"{{ $jadwal->catatan }}"</div>
+            @endif
+            <div class="task-footer">
+              <div class="task-time">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                {{ \Illuminate\Support\Carbon::parse($jadwal->waktu)->format('H:i') }}
+              </div>
+              <span class="status-pill {{ $statusInfo['kelas'] }}">{{ $statusInfo['label'] }}</span>
+            </div>
           </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+      @empty
+        <div style="text-align:center; color:#9ca3af; padding:28px; background:#fff; border-radius:12px;">
+          Belum ada tugas pengangkutan buat besok.
         </div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-      </div>
+      @endforelse
     </div>
   </div>
   </div>
