@@ -1,9 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardDinasController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PetugasController;
 use Illuminate\Support\Facades\Route;
+
+// Mode pratinjau: isi PRATINJAU_TANPA_LOGIN=true di .env lokal agar halaman
+// bisa dibuka tanpa login. Kalau tidak diisi, perilaku route sama seperti biasa.
+$middleware = env('PRATINJAU_TANPA_LOGIN', false) ? [] : ['auth'];
 
 // ===== Halaman umum =====
 Route::get('/', function () {
@@ -22,7 +27,7 @@ Route::post('/registrasi', [AuthController::class, 'register'])
 
 
 // ===== Halaman yang butuh login (semua role) =====
-Route::middleware('auth')->group(function () {
+Route::middleware($middleware)->group(function () {
 
     // --- Masyarakat ---
     Route::get('/beranda-masyarakat', [LaporanController::class, 'beranda'])->name('beranda.masyarakat');
@@ -73,9 +78,7 @@ Route::middleware('auth')->group(function () {
     })->name('detail.tugas.petugas');
 
     // --- Dinas (Admin) ---
-    Route::get('/beranda-dinas', function () {
-        return view('beranda_dinas');
-    })->name('beranda.dinas');
+    Route::get('/beranda-dinas', [DashboardDinasController::class, 'beranda'])->name('beranda.dinas');
 
     // Halaman ini menampilkan data pribadi pelapor (nama) dan foto laporan,
     // jadi dibatasi dinas saja — sama seperti halaman Data Petugas.
