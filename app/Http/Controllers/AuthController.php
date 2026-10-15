@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class AuthController extends Controller
 {
@@ -137,6 +138,118 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         return $this->redirectByRole($user);
+    }
+
+    /**
+     * Tampilkan form "Lupa Password" step 1 (masukkan username/email/NIP).
+     */
+    public function showForgotPasswordForm(): View
+    {
+        return view('forgot_password');
+    }
+
+    /**
+     * Proses "Lupa Password" step 1: cari akun berdasarkan username, email,
+     * atau NIP — TANPA verifikasi email/OTP. Begitu akunnya ketemu, id-nya
+     * disimpan sementara di session dan user langsung diarahkan ke form
+     * bikin password baru (step 2).
+     *
+     * Catatan: ini sengaja dibikin simpel sesuai permintaan (gak pakai
+     * verifikasi email), jadi siapa pun yang tau username/email/NIP orang
+     * lain bisa ikut reset password akun itu. Kalau nanti butuh lebih aman,
+     * tinggal tambah verifikasi (OTP, pertanyaan keamanan, dll) di sini.
+     */
+    public function sendResetLink(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'identifier' => ['required', 'string'],
+        ], [
+            'identifier.required' => 'Username, email, atau NIP wajib diisi.',
+        ]);
+
+        $identifier = $request->input('identifier');
+
+        $user = User::where('username', $identifier)
+            ->orWhere('email', $identifier)
+            ->orWhere('nip', $identifier)
+            ->first();
+
+        if (! $user) {
+            throw ValidationException::withMessages([
+                'identifier' => 'Akun dengan username, email, atau NIP tersebut tidak ditemukan.',
+            ]);
+        }
+
+        // Simpan id user di session, dipakai showResetForm() & resetPassword()
+        // di bawah supaya step 2 tau ini punya siapa, dan supaya orang gak
+        // bisa langsung buka /reset-password tanpa lewat step 1 ini dulu.
+        $request->session()->put('reset_password_user_id', $user->id);
+
+        return redirect()->route('password.reset');
+    }
+
+    /**
+     * Tampilkan form password baru (step 2) — hanya bisa diakses setelah
+     * lewat step 1 (sendResetLink) di session yang sama.
+     */
+    public function showResetForm(Request $request): View|RedirectResponse
+    {
+        if (! $request->session()->has('reset_password_user_id')) {
+            return redirect()
+                ->route('password.request')
+                ->with('error', 'Silakan masukkan username, email, atau NIP Anda terlebih dahulu.');
+        }
+
+        return view('reset_password');
+    }
+
+    /**
+     * Proses reset password (step 2): simpan password baru buat user yang
+     * id-nya tersimpan di session dari step 1.
+     */
+    public function resetPassword(Request $request): RedirectResponse
+    {
+        $userId = $request->session()->get('reset_password_user_id');
+
+        if (! $userId) {
+            return redirect()
+                ->route('password.request')
+                ->with('error', 'Sesi reset password sudah habis, silakan ulangi dari awal.');
+        }
+
+        $validated = $request->validate([
+            'password' => [
+                'bail', 'required', 'string', 'min:8', 'max:72', 'confirmed',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d).+$/',
+            ],
+        ], [
+            'password.required'  => 'Password baru wajib diisi.',
+            'password.min'       => 'Password minimal 8 karakter.',
+            'password.max'       => 'Password maksimal 72 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'password.regex'     => 'Password harus mengandung huruf dan angka.',
+        ]);
+
+        $user = User::find($userId);
+
+        if (! $user) {
+            return redirect()
+                ->route('password.request')
+                ->with('error', 'Akun tidak ditemukan, silakan ulangi dari awal.');
+        }
+
+        // Jangan Hash::make() manual: cast 'hashed' di model User sudah
+        // otomatis hash saat disimpan.
+        $user->password = $validated['password'];
+        $user->save();
+
+        // Hapus dari session supaya /reset-password gak bisa dipakai lagi
+        // buat akun yang sama tanpa ulang dari step 1.
+        $request->session()->forget('reset_password_user_id');
+
+        return redirect()
+            ->route('login')
+            ->with('success', 'Password berhasil diubah. Silakan masuk dengan password baru Anda.');
     }
 
     /**

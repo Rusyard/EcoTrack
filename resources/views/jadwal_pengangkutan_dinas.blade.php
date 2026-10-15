@@ -352,30 +352,6 @@
     pointer-events: none;
   }
 
-  .btn-new {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #0f5c3f;
-    color: #ffffff;
-    border: none;
-    border-radius: 9px;
-    padding: 0 20px;
-    font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-
-  .btn-new:hover {
-    background: #0c4a33;
-  }
-
-  .btn-new svg {
-    width: 15px;
-    height: 15px;
-  }
-
   /* TABLE */
   .table-card {
     background: #ffffff;
@@ -648,10 +624,6 @@
         </select>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
       </div>
-      <button class="btn-new">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-        Buat Jadwal
-      </button>
     </div>
 
     <!-- TABLE -->

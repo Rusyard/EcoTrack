@@ -29,7 +29,7 @@ Route::post('/lupa-password', [AuthController::class, 'sendResetLink'])
     ->middleware('throttle:3,1')
     ->name('password.email');
 
-Route::get('/reset-password/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+Route::get('/reset-password', [AuthController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])
     ->middleware('throttle:6,1')
     ->name('password.update');

@@ -150,13 +150,6 @@
     margin-top: 6px;
   }
 
-  .remember-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 24px;
-  }
-
   .remember-row input[type="checkbox"] {
     width: 16px;
     height: 16px;
@@ -243,6 +236,12 @@
     <p class="tagline">Manajemen keberlanjutan dan efisiensi limbah terpadu</p>
 
     <div class="login-card">
+      @if (session('success'))
+        <div style="background:#dcfce7; color:#166534; padding:12px 16px; border-radius:8px; margin-bottom:20px; font-size:0.88rem; font-weight:600;">
+          {{ session('success') }}
+        </div>
+      @endif
+
       <form id="loginForm" method="POST" action="{{ route('login.post') }}">
         @csrf
         <div class="field">
@@ -262,7 +261,7 @@
         <div class="field">
           <div class="field-header">
             <label for="password">Kata Sandi</label>
-            <a href="#" class="forgot-link">Lupa Password?</a>
+            <a href="{{ route('password.request') }}" class="forgot-link">Lupa Password?</a>
           </div>
           <div class="input-group">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -273,10 +272,6 @@
           </div>
         </div>
 
-        <div class="remember-row">
-          <input type="checkbox" id="remember" name="remember">
-          <label for="remember">Ingat Saya</label>
-        </div>
 
         @error('identifier')
           <div class="error-text" style="display: block;">{{ $message }}</div>

@@ -123,16 +123,6 @@
     color: #ffffff;
   }
 
-  .nav-badge {
-    margin-left: auto;
-    background: #ef4444;
-    color: #ffffff;
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 1px 7px;
-    border-radius: 999px;
-  }
-
   .sidebar-footer {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-top: 16px;
@@ -701,7 +691,6 @@
         <a href="{{ route('laporan.masuk.dinas') }}" class="nav-item active">
           <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
           Laporan Masuk
-          <span class="nav-badge">3</span>
         </a>
       </li>
       <li>
