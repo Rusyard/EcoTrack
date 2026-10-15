@@ -33,8 +33,13 @@ class ShuttleController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'nama_armada' => 'required|string|max:50',
+            'kapasitas' => 'required|numeric|min:10|max:60',
+            'rute_operasional' => 'required|string'
+        ]);
+
         Shuttle::create($request->all());
-        
         return redirect()->route('shuttles.index');
     }
 
@@ -61,9 +66,17 @@ class ShuttleController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $request->validate([
+            'nama armada' => 'required|string|max:255',
+            'kapaasitas' => 'required|numeric|min:10|max:60',
+            'rute_operasional' => 'required|string'
+        ]);
+
+
         $shuttle = Shuttle::findOrFail($id);
         $shuttle->update($request->all());
-        return redirect()->route('shuttles.index');
+
+        return redirect()->route('shuttles.index')->with('success', 'Data armada berhasil diperbarui');
     }
 
     /**

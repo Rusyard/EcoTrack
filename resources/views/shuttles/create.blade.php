@@ -14,7 +14,26 @@
 
         <div>
             <label for="nama_armada">Nama Armada:</label><br>
-            <input type="text" id="nama_armada" name="nama_armada" required>
+            <input type="text" id="nama_armada" name="nama_armada" required, value="{{ old('nama_armada') }}">
+            @error('nama_armada')
+                <span style="color: red;">{{ $message }}</span>
+            @enderror
+        </div>
+        <br>
+        <div>
+            <label for="kapasitas">Kapasitas:</label><br>
+            <input type="number" id="kapasitas" name="kapasitas" required, value="{{ old('kapasitas') }}">
+            @error('kapasitas')
+                <span style="color: red;">{{ $message }}</span>
+            @enderror
+        </div>
+        <br>
+        <div>
+            <label for="rute_operasional">Rute Operasional:</label><br>
+            <input type="text" id="rute_operasional" name="rute_operasional" required, value="{{ old('rute_operasional') }}">
+            @error('rute_operasional')
+                <span style="color: red;">{{ $message }}</span>
+            @enderror
         </div>
         <br>
 

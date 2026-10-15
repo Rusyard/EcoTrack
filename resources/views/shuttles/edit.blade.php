@@ -14,7 +14,10 @@
         <div>
             <label for="nama_armada">Nama Armada:</label><br>
             <!-- Atribut name dan value disesuaikan dengan nama_armada -->
-            <input type="text" id="nama_armada" name="nama_armada" value="{{ $shuttle->nama_armada }}" required>
+            <input type="text" id="nama_armada" name="nama_armada" value="{{ $shuttle->nama_armada }}" required, value="{{ old('nama_armada') }}">
+            @error('nama_armada')
+                <span style="color: red;">{{ $message }}</span>
+            @enderror
         </div>
         <br>
 
