@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/css/login.css',
                 'resources/js/login.js',
+                'resources/css/registrasi.css',
             ],
             refresh: true,
             fonts: [

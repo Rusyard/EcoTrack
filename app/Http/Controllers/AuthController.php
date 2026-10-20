@@ -67,7 +67,9 @@ class AuthController extends Controller
      */
     public function showRegisterForm()
     {
-        return view('registrasi');
+        return view('registrasi', [
+            'judul' => 'EcoTrack - Buat Akun Baru',
+        ]);
     }
 
     /**
