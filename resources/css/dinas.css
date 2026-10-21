@@ -1,0 +1,243 @@
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f5f7fa;
+    color: #111827;
+  }
+
+  .layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    background: #0d2b21;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    padding: 22px 18px;
+  }
+
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.05rem;
+    margin-bottom: 22px;
+    padding: 0 6px;
+  }
+
+  .sidebar-logo {
+    width: 28px;
+    height: 28px;
+    background: #1eb980;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sidebar-logo svg {
+    width: 15px;
+    height: 15px;
+    stroke: #ffffff;
+    fill: none;
+    stroke-width: 2.2;
+  }
+
+  .org-box {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 22px;
+  }
+
+  .org-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: #9ec9b6;
+    margin-bottom: 3px;
+  }
+
+  .org-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 9px;
+    color: #b7d9c8;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    position: relative;
+  }
+
+  .nav-item svg {
+    width: 17px;
+    height: 17px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    flex-shrink: 0;
+  }
+
+  .nav-item.active {
+    background: #1eb980;
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  .nav-item:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.06);
+    color: #ffffff;
+  }
+
+  .nav-badge {
+    margin-left: auto;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 999px;
+  }
+
+  .sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 16px;
+    margin-top: 16px;
+  }
+
+  .footer-label {
+    font-size: 0.7rem;
+    color: #9ec9b6;
+    margin-bottom: 3px;
+  }
+
+  .footer-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .logout-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #f3a5a5;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .logout-link svg {
+    width: 15px;
+    height: 15px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+  }
+
+  /* ===== CONTENT ===== */
+  .content {
+    flex: 1;
+    padding: 24px 32px 40px;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .topbar-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #111827;
+  }
+
+  .topbar-title svg {
+    width: 19px;
+    height: 19px;
+    stroke: #374151;
+    fill: none;
+    stroke-width: 2;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .date-chip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 7px 13px;
+    font-size: 0.82rem;
+    color: #374151;
+    font-weight: 500;
+  }
+
+  .date-chip svg {
+    width: 15px;
+    height: 15px;
+    stroke: #6b7280;
+    fill: none;
+    stroke-width: 2;
+  }
+
+  .alert-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    border-radius: 8px;
+    padding: 7px 13px;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .alert-chip svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+  }
+
+@media (max-width: 760px) {
+  .sidebar { display: none; }
+}

@@ -15,6 +15,7 @@ export default defineConfig({
                 'resources/css/beranda_masyarakat.css',
                 'resources/css/form_laporan.css',
                 'resources/js/form_laporan.js',
+                'resources/css/beranda_dinas.css',
             ],
             refresh: true,
             fonts: [
