@@ -31,11 +31,34 @@ class LaporanController extends Controller
             ->get();
 
         return view('beranda_masyarakat', [
+            'judul'           => 'EcoTrack - Dashboard',
             'laporanSaya'     => $laporanSaya,
             'totalLaporan'    => $laporanSaya->count(),
             'sedangDiproses'  => $laporanSaya->where('status', 'dijadwalkan')->count(),
             'selesaiDiangkut' => $laporanSaya->where('status', 'selesai')->count(),
-        ]);
+            // Kelas CSS + label status laporan untuk tabel histori
+            // (sebelumnya dipetakan langsung di Blade lewat @php).
+            'daftarStatus'    => [
+                'menunggu'    => ['kelas' => 'status-menunggu', 'label' => 'Menunggu Validasi'],
+                'dijadwalkan' => ['kelas' => 'status-proses',   'label' => 'Proses Pengangkutan'],
+                'selesai'     => ['kelas' => 'status-selesai',  'label' => 'Selesai'],
+            ],
+        ] + $this->dataPengguna($request));
+    }
+
+    /**
+     * Data pengguna yang sedang login untuk navbar & sapaan di halaman
+     * masyarakat (sebelumnya dipanggil langsung lewat Auth::user() di Blade).
+     */
+    private function dataPengguna(Request $request): array
+    {
+        $nama = $request->user()->nama_lengkap;
+
+        return [
+            'namaLengkap' => $nama,
+            'namaDepan'   => explode(' ', $nama)[0],
+            'inisial'     => strtoupper(substr($nama, 0, 1)),
+        ];
     }
 
     /**

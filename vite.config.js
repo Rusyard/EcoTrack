@@ -12,6 +12,7 @@ export default defineConfig({
                 'resources/css/login.css',
                 'resources/js/login.js',
                 'resources/css/registrasi.css',
+                'resources/css/beranda_masyarakat.css',
             ],
             refresh: true,
             fonts: [
