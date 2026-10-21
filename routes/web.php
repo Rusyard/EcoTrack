@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DinasController;
+use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\TugasController;
@@ -93,9 +94,7 @@ Route::middleware('auth')->group(function () {
             ->name('laporan.jadwalkan');
     });
 
-    Route::get('/jadwal-pengangkutan-dinas', function () {
-        return view('jadwal_pengangkutan_dinas');
-    })->name('jadwal.pengangkutan.dinas');
+    Route::get('/jadwal-pengangkutan-dinas', [JadwalController::class, 'index'])->name('jadwal.pengangkutan.dinas');
 
     // Halaman ini menampilkan data pribadi petugas (NIP, kontak), dan
     // hanya dinas yang boleh menambah akun petugas baru, jadi GET & POST

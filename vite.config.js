@@ -20,6 +20,8 @@ export default defineConfig({
                 'resources/js/laporan_masuk_dinas.js',
                 'resources/css/keloladata_petugas_dinas.css',
                 'resources/js/keloladata_petugas_dinas.js',
+                'resources/css/jadwal_pengangkutan_dinas.css',
+                'resources/js/jadwal_pengangkutan_dinas.js',
             ],
             refresh: true,
             fonts: [
