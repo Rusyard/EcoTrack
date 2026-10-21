@@ -69,7 +69,9 @@ class LaporanController extends Controller
     public function create(): View
     {
         return view('form_laporan', [
-            'daftarTps' => Tps::orderBy('nama_tps')->get(),
+            'judul'      => 'EcoTrack - Formulir Pelaporan Kondisi TPS',
+            'urlKembali' => route('beranda.masyarakat'),
+            'daftarTps'  => Tps::orderBy('nama_tps')->get(),
         ]);
     }
 

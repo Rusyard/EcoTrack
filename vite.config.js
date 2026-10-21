@@ -13,6 +13,8 @@ export default defineConfig({
                 'resources/js/login.js',
                 'resources/css/registrasi.css',
                 'resources/css/beranda_masyarakat.css',
+                'resources/css/form_laporan.css',
+                'resources/js/form_laporan.js',
             ],
             refresh: true,
             fonts: [
