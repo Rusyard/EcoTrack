@@ -19,8 +19,6 @@ class DinasController extends Controller
     {
         return view('beranda_dinas', [
             'judul'           => 'EcoTrack - Dashboard Monitoring',
-            'tanggal'         => 'Senin, 01 Juni 2026',
-            'jumlahTpsKritis' => 2,
             'kenaikanVolume'  => '+12% dari minggu lalu',
             'statistik'       => [
                 ['warna' => 'green',  'nilai' => 6, 'judul' => 'Total TPS Aktif',  'keterangan' => 'Kota Madiun',     'bahaya' => false],
@@ -44,6 +42,6 @@ class DinasController extends Controller
                 ['status' => 'aman',   'atas' => 75, 'kiri' => 30, 'pulse' => false],
                 ['status' => 'aman',   'atas' => 82, 'kiri' => 68, 'pulse' => false],
             ],
-        ] + $this->dataSidebarDinas($request, 'dashboard'));
+        ] + $this->dataSidebarDinas($request, 'dashboard') + $this->dataTopbarDinas());
     }
 }

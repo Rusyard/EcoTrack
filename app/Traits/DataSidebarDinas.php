@@ -13,15 +13,28 @@ trait DataSidebarDinas
 {
     /**
      * @param  string  $menuAktif  salah satu: dashboard | laporan | jadwal | petugas
+     * @param  int|null  $jumlahLaporanBaru  angka badge "Laporan Masuk"; null = badge disembunyikan
      */
-    protected function dataSidebarDinas(Request $request, string $menuAktif): array
+    protected function dataSidebarDinas(Request $request, string $menuAktif, ?int $jumlahLaporanBaru = 3): array
     {
         return [
             'menuAktif'         => $menuAktif,
             'namaPengguna'      => $request->user()->nama_lengkap,
-            // Masih angka contoh seperti tampilan awal; nanti bisa diganti
-            // jumlah laporan berstatus "menunggu" dari database.
-            'jumlahLaporanBaru' => 3,
+            // Default masih angka contoh seperti tampilan awal; nanti bisa
+            // diganti jumlah laporan berstatus "menunggu" dari database.
+            'jumlahLaporanBaru' => $jumlahLaporanBaru,
+        ];
+    }
+
+    /**
+     * Data chip di topbar halaman dinas (tanggal & jumlah TPS kritis).
+     * Masih data contoh seperti tampilan awal.
+     */
+    protected function dataTopbarDinas(): array
+    {
+        return [
+            'tanggal'         => 'Senin, 01 Juni 2026',
+            'jumlahTpsKritis' => 2,
         ];
     }
 }

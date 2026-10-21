@@ -7,6 +7,7 @@ use App\Models\Kendaraan;
 use App\Models\Laporan;
 use App\Models\Tps;
 use App\Models\User;
+use App\Traits\DataSidebarDinas;
 use App\Traits\UnggahFotoKeCloudinary;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
@@ -16,7 +17,7 @@ use Illuminate\View\View;
 
 class LaporanController extends Controller
 {
-    use UnggahFotoKeCloudinary;
+    use UnggahFotoKeCloudinary, DataSidebarDinas;
 
     /**
      * Beranda masyarakat: ringkasan jumlah laporan (total/proses/selesai)
@@ -141,13 +142,14 @@ class LaporanController extends Controller
      * Halaman "Laporan Masuk" dinas: daftar semua laporan masyarakat
      * beserta foto yang diunggah (sebelumnya tabel ini statis/hardcode).
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         $laporan = Laporan::with(['tps', 'pelapor'])
             ->latest('tanggal_lapor')
             ->get();
 
         return view('laporan_masuk_dinas', [
+            'judul'         => 'EcoTrack - Kelola Laporan Masyarakat',
             'laporan'       => $laporan,
             // Dipakai buat dropdown "Petugas yang Ditugaskan" di modal
             // Jadwalkan. Petugas yang cuti/nonaktif sengaja tidak
@@ -157,7 +159,7 @@ class LaporanController extends Controller
                 ->whereIn('status', ['aktif', 'bertugas'])
                 ->orderBy('nama_lengkap')
                 ->get(),
-        ]);
+        ] + $this->dataSidebarDinas($request, 'laporan', null) + $this->dataTopbarDinas());
     }
 
     /**

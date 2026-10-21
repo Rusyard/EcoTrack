@@ -16,6 +16,8 @@ export default defineConfig({
                 'resources/css/form_laporan.css',
                 'resources/js/form_laporan.js',
                 'resources/css/beranda_dinas.css',
+                'resources/css/laporan_masuk_dinas.css',
+                'resources/js/laporan_masuk_dinas.js',
             ],
             refresh: true,
             fonts: [
