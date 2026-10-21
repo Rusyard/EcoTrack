@@ -18,6 +18,8 @@ export default defineConfig({
                 'resources/css/beranda_dinas.css',
                 'resources/css/laporan_masuk_dinas.css',
                 'resources/js/laporan_masuk_dinas.js',
+                'resources/css/keloladata_petugas_dinas.css',
+                'resources/js/keloladata_petugas_dinas.js',
             ],
             refresh: true,
             fonts: [

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Traits\DataSidebarDinas;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,23 +12,37 @@ use Illuminate\View\View;
 
 class PetugasController extends Controller
 {
+    use DataSidebarDinas;
+
     /**
      * Tampilkan halaman "Data Petugas" dengan data asli dari database
      * (sebelumnya tabel & angka statistik di halaman ini statis/hardcode).
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         $petugas = User::where('role', 'petugas')
             ->orderBy('nama_lengkap')
             ->get();
 
         return view('keloladata_petugas_dinas', [
-            'petugas'          => $petugas,
-            'totalPetugas'     => $petugas->count(),
-            'jumlahBertugas'   => $petugas->where('status', 'bertugas')->count(),
-            'jumlahCuti'       => $petugas->where('status', 'cuti')->count(),
-            'jumlahNonaktif'   => $petugas->where('status', 'nonaktif')->count(),
-        ]);
+            'judul'         => 'EcoTrack - Data Petugas',
+            'petugas'       => $petugas,
+            'statistik'     => [
+                ['warna' => 'blue',   'nilai' => $petugas->count(),                               'judul' => 'Total Petugas'],
+                ['warna' => 'green',  'nilai' => $petugas->where('status', 'bertugas')->count(),  'judul' => 'Sedang Bertugas'],
+                ['warna' => 'orange', 'nilai' => $petugas->where('status', 'cuti')->count(),      'judul' => 'Cuti'],
+                ['warna' => 'gray',   'nilai' => $petugas->where('status', 'nonaktif')->count(),  'judul' => 'Nonaktif'],
+            ],
+            // Label status yang tampil di tabel (sebelumnya dihitung di Blade).
+            'labelStatus'   => [
+                'aktif'    => 'Aktif',
+                'bertugas' => 'Sedang Bertugas',
+                'cuti'     => 'Cuti',
+                'nonaktif' => 'Nonaktif',
+            ],
+            // Pilihan wilayah di modal "Tambah Petugas" (sebelumnya ditulis di Blade).
+            'daftarWilayah' => ['Kartoharjo', 'Manguharjo', 'Taman'],
+        ] + $this->dataSidebarDinas($request, 'petugas') + $this->dataTopbarDinas());
     }
 
     /**
