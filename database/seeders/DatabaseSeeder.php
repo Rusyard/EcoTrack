@@ -8,7 +8,7 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Urutan pemanggilan penting: tabel yang jadi "induk"
-     * (users, tps, kendaraan) harus diisi dulu sebelum tabel
+     * (users, tps) harus diisi dulu sebelum tabel
      * yang punya foreign key ke tabel tersebut (laporan,
      * jadwal_pengangkutan, notifikasi).
      */
@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             TpsSeeder::class,
-            KendaraanSeeder::class,
             LaporanSeeder::class,
             JadwalPengangkutanSeeder::class,
             NotifikasiSeeder::class,

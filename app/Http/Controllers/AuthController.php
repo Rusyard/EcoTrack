@@ -153,11 +153,6 @@ class AuthController extends Controller
      * atau NIP — TANPA verifikasi email/OTP. Begitu akunnya ketemu, id-nya
      * disimpan sementara di session dan user langsung diarahkan ke form
      * bikin password baru (step 2).
-     *
-     * Catatan: ini sengaja dibikin simpel sesuai permintaan (gak pakai
-     * verifikasi email), jadi siapa pun yang tau username/email/NIP orang
-     * lain bisa ikut reset password akun itu. Kalau nanti butuh lebih aman,
-     * tinggal tambah verifikasi (OTP, pertanyaan keamanan, dll) di sini.
      */
     public function sendResetLink(Request $request): RedirectResponse
     {
