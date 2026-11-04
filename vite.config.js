@@ -22,6 +22,8 @@ export default defineConfig({
                 'resources/js/keloladata_petugas_dinas.js',
                 'resources/css/jadwal_pengangkutan_dinas.css',
                 'resources/js/jadwal_pengangkutan_dinas.js',
+                'resources/css/detail_tugas_petugas.css',
+                'resources/js/detail_tugas_petugas.js',
             ],
             refresh: true,
             fonts: [

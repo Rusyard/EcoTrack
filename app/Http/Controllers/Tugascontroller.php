@@ -51,8 +51,26 @@ class TugasController extends Controller
 
         $jadwal->load(['tps', 'laporan']);
 
+        $tps = $jadwal->tps;
+        $laporan = $jadwal->laporan;
+
+        $statusLabel = [
+            'terjadwal'  => 'Belum Diangkut',
+            'berjalan'   => 'Sedang Diproses',
+            'selesai'    => 'Selesai Diangkut',
+            'dibatalkan' => 'Dibatalkan',
+        ][$jadwal->status];
+
         return view('detail_tugas_petugas', [
-            'jadwal' => $jadwal,
+            'judul'       => 'EcoTrack - Detail Tugas Pengangkutan',
+            'jadwal'      => $jadwal,
+            'tps'         => $tps,
+            'laporan'     => $laporan,
+            'mendesak'    => $laporan && $laporan->prioritas === 'mendesak',
+            'kapasitas'   => $tps->kapasitas_kg > 0
+                ? min(100, (int) round($tps->volume_saat_ini / $tps->kapasitas_kg * 100))
+                : 0,
+            'statusLabel' => $statusLabel,
         ]);
     }
 
