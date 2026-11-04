@@ -12,10 +12,6 @@ Route::get('/', [AuthController::class, 'welcome'])->name('welcome');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-<<<<<<< HEAD
-=======
-
->>>>>>> fb77bb798ca2e33a3d34cf345052a51739ffff2a
 Route::get('/registrasi', [AuthController::class, 'showRegistrasiForm'])->name('registrasi');
 
 
