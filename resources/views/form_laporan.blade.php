@@ -8,7 +8,12 @@
     <h1 class="page-title">{{ $judul }}</h1>
     <p class="page-desc">Laporkan kondisi TPS yang membutuhkan perhatian segera dari Dinas Kebersihan.</p>
 
-    <form id="reportForm">
+    @if (session('success'))
+      <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    <form id="reportForm" method="POST" action="{{ route('form.laporan.store') }}" enctype="multipart/form-data">
+      @csrf
 
       <!-- 1. PILIH LOKASI -->
       <div class="section">
@@ -28,6 +33,9 @@
             </label>
           @endforeach
         </div>
+        @error('lokasi')
+          <div class="error-text">{{ $message }}</div>
+        @enderror
       </div>
 
       <!-- 2. DESKRIPSI -->
@@ -37,8 +45,11 @@
           2. Deskripsi Kondisi Lapangan
         </div>
 
-        <textarea id="deskripsi" name="deskripsi" minlength="20" placeholder="Jelaskan kondisi TPS secara detail. Contoh: Sampah menumpuk dan meluber ke jalan, sudah 3 hari tidak diangkut. Bau menyengat dan terdapat genangan air di sekitar TPS..."></textarea>
+        <textarea id="deskripsi" name="deskripsi" minlength="20" placeholder="Jelaskan kondisi TPS secara detail. Contoh: Sampah menumpuk dan meluber ke jalan, sudah 3 hari tidak diangkut. Bau menyengat dan terdapat genangan air di sekitar TPS...">{{ old('deskripsi') }}</textarea>
         <div class="char-count"><span id="charCount">0</span> karakter — minimal 20 karakter</div>
+        @error('deskripsi')
+          <div class="error-text">{{ $message }}</div>
+        @enderror
       </div>
 
       <!-- 3. UPLOAD FOTO -->
@@ -55,9 +66,12 @@
           <div class="upload-title">Seret &amp; Lepaskan Foto</div>
           <div class="upload-sub">atau klik untuk memilih dari perangkat Anda</div>
           <div class="upload-format">Format: JPG, PNG, WEBP — Maks. 5MB</div>
-          <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp">
+          <input type="file" id="fileInput" name="foto" accept="image/jpeg,image/png,image/webp">
           <div class="file-preview" id="filePreview"></div>
         </label>
+        @error('foto')
+          <div class="error-text">{{ $message }}</div>
+        @enderror
       </div>
 
       <div class="actions">

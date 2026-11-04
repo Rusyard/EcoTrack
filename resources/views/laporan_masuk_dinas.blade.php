@@ -6,6 +6,16 @@
 
     @include('partials.filter_bar', ['placeholder' => 'Cari berdasarkan TPS atau nama pelapor...'])
 
+    @if (session('success'))
+      <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    @if ($errors->any())
+      <div class="alert" style="background:#fef2f2; color:#b91c1c; border:1px solid #fecaca;">
+        {{ $errors->first() }}
+      </div>
+    @endif
+
     <!-- TABLE -->
     <div class="table-card">
       <table>
@@ -16,6 +26,7 @@
             <th>Pelapor</th>
             <th>Lokasi TPS</th>
             <th>Deskripsi</th>
+            <th>Foto</th>
             <th>Status</th>
             <th>Tindakan</th>
           </tr>

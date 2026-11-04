@@ -36,10 +36,6 @@
           'tautan'      => ['teks' => 'Lupa Password?', 'href' => '#'],
         ])
 
-        <div class="remember-row">
-          <input type="checkbox" id="remember" name="remember">
-          <label for="remember">Ingat Saya</label>
-        </div>
 
         <button type="submit" class="btn-submit">
           Masuk Ke Aplikasi
