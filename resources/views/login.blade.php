@@ -4,7 +4,227 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EcoTrack - Login</title>
+<<<<<<< HEAD
 <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+=======
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f5f7fa;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .login-wrapper {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logo-icon {
+    width: 64px;
+    height: 64px;
+    background-color: #1eb980;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .logo-icon svg {
+    width: 30px;
+    height: 30px;
+    stroke: #0e3d2c;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  h1.brand {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #0f7a4e;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+  }
+
+  .tagline {
+    color: #6b7280;
+    font-size: 0.95rem;
+    text-align: center;
+    line-height: 1.5;
+    margin-bottom: 30px;
+    max-width: 320px;
+  }
+
+  .login-card {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 32px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  }
+
+  .field {
+    margin-bottom: 20px;
+  }
+
+  .field-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .forgot-link {
+    font-size: 0.85rem;
+    color: #0f7a4e;
+    text-decoration: none;
+  }
+
+  .forgot-link:hover {
+    text-decoration: underline;
+  }
+
+  .input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0 14px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .input-group:focus-within {
+    border-color: #1eb980;
+    box-shadow: 0 0 0 3px rgba(30, 185, 128, 0.15);
+  }
+
+  .input-group svg {
+    width: 18px;
+    height: 18px;
+    color: #6b7280;
+    flex-shrink: 0;
+  }
+
+  .input-group input {
+    border: none;
+    outline: none;
+    padding: 12px 10px;
+    font-size: 0.95rem;
+    width: 100%;
+    color: #111827;
+    background: transparent;
+  }
+
+  .input-group input::placeholder {
+    color: #9ca3af;
+  }
+
+  .input-group.error {
+    border-color: #dc2626;
+  }
+
+  .error-text {
+    display: none;
+    color: #dc2626;
+    font-size: 0.8rem;
+    margin-top: 6px;
+  }
+
+  .remember-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #1eb980;
+    cursor: pointer;
+  }
+
+  .remember-row label {
+    font-weight: 400;
+    color: #374151;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .btn-submit {
+    width: 100%;
+    background-color: #0f5c3f;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.15s ease;
+  }
+
+  .btn-submit:hover {
+    background-color: #0c4a33;
+  }
+
+  .btn-submit svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 24px 0 20px;
+  }
+
+  .help-text {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #6b7280;
+  }
+
+  .help-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #0f7a4e;
+    font-weight: 600;
+    text-decoration: none;
+    margin-top: 4px;
+  }
+
+  .help-link:hover {
+    text-decoration: underline;
+  }
+
+  .help-link svg {
+    width: 16px;
+    height: 16px;
+  }
+</style>
+>>>>>>> 50632f4b69884c9a93883f03346394c9bff9921a
 </head>
 <body>
 
@@ -20,6 +240,12 @@
     <p class="tagline">Manajemen keberlanjutan dan efisiensi limbah terpadu</p>
 
     <div class="login-card">
+      @if (session('success'))
+        <div style="background:#dcfce7; color:#166534; padding:12px 16px; border-radius:8px; margin-bottom:20px; font-size:0.88rem; font-weight:600;">
+          {{ session('success') }}
+        </div>
+      @endif
+
       <form id="loginForm" method="POST" action="{{ route('login.post') }}">
         @csrf
         <div class="field">
@@ -39,7 +265,7 @@
         <div class="field">
           <div class="field-header">
             <label for="password">Kata Sandi</label>
-            <a href="#" class="forgot-link">Lupa Password?</a>
+            <a href="{{ route('password.request') }}" class="forgot-link">Lupa Password?</a>
           </div>
           <div class="input-group">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -50,10 +276,6 @@
           </div>
         </div>
 
-        <div class="remember-row">
-          <input type="checkbox" id="remember" name="remember">
-          <label for="remember">Ingat Saya</label>
-        </div>
 
         @error('identifier')
           <div class="error-text" style="display: block;">{{ $message }}</div>
