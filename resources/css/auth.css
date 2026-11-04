@@ -1,0 +1,480 @@
+/* EcoTrack - Auth (welcome, login, registrasi)
+   Bagian "bersama" dipakai ketiga halaman. Yang berbeda antar halaman
+   dibatasi lewat class di <body>: halaman-welcome, halaman-login, halaman-registrasi. */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ===== Tata letak halaman kartu tengah (welcome + login) ===== */
+body.halaman-welcome,
+body.halaman-login {
+  background-color: #f5f7fa;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.auth-wrapper {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===== Brand (partials/auth_brand) ===== */
+.logo-icon {
+  width: 64px;
+  height: 64px;
+  background-color: #1eb980;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.logo-icon svg {
+  width: 30px;
+  height: 30px;
+  stroke: #0e3d2c;
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+h1.brand {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0f7a4e;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.tagline {
+  color: #6b7280;
+  font-size: 0.95rem;
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 30px;
+  max-width: 320px;
+}
+
+.auth-card {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 32px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+/* ===== Form (partials/auth_field) ===== */
+.field {
+  margin-bottom: 20px;
+}
+
+.field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.field-header label {
+  margin-bottom: 0;
+}
+
+.forgot-link {
+  font-size: 0.85rem;
+  color: #0f7a4e;
+  text-decoration: none;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0 14px;
+  background: #ffffff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input-group:focus-within {
+  border-color: #1eb980;
+  box-shadow: 0 0 0 3px rgba(30, 185, 128, 0.15);
+}
+
+.input-group svg {
+  width: 18px;
+  height: 18px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.input-group input,
+.input-group select {
+  border: none;
+  outline: none;
+  padding: 12px 10px;
+  font-size: 0.95rem;
+  width: 100%;
+  color: #111827;
+  background: transparent;
+  appearance: none;
+}
+
+.input-group input::placeholder {
+  color: #9ca3af;
+}
+
+.input-group.select-group svg.chevron {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.input-group.error {
+  border-color: #dc2626;
+}
+
+.error-text {
+  display: none;
+  color: #dc2626;
+  font-size: 0.8rem;
+  margin-top: 6px;
+}
+
+.error-text.show {
+  display: block;
+}
+
+.success-text {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+.remember-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.remember-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #1eb980;
+  cursor: pointer;
+}
+
+.remember-row label {
+  font-weight: 400;
+  color: #374151;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+/* ===== Tombol ===== */
+.btn-submit {
+  width: 100%;
+  background-color: #0f5c3f;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.btn-submit:hover {
+  background-color: #0c4a33;
+}
+
+.btn-submit svg {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-submit.btn-outline {
+  background-color: #ffffff;
+  color: #0f5c3f;
+  border: 1px solid #0f5c3f;
+}
+
+.btn-submit.btn-outline:hover {
+  background-color: #ecfdf5;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 24px 0 20px;
+}
+
+.help-text {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.help-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #0f7a4e;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 4px;
+}
+
+.help-link:hover {
+  text-decoration: underline;
+}
+
+.help-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ===== Welcome ===== */
+.welcome-text {
+  text-align: center;
+  color: #374151;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.welcome-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ===== Registrasi (dua panel) ===== */
+body.halaman-registrasi {
+  min-height: 100vh;
+}
+
+body.halaman-registrasi .divider {
+  margin: 26px 0 18px;
+}
+
+body.halaman-registrasi .btn-submit {
+  margin-top: 6px;
+}
+
+.page {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Panel kiri */
+.panel-left {
+  position: relative;
+  flex: 0 0 50%;
+  background-image:
+    linear-gradient(160deg, rgba(6, 60, 48, 0.75), rgba(6, 90, 70, 0.55)),
+    url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1200&q=80");
+  background-size: cover;
+  background-position: center;
+  color: #ffffff;
+  padding: 60px 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.brand-row {
+  font-size: 1.9rem;
+  margin-bottom: 28px;
+}
+
+.brand-row .eco {
+  font-weight: 400;
+  color: #6be3ad;
+}
+
+.brand-row .track {
+  font-weight: 800;
+}
+
+.headline {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  line-height: 1.25;
+}
+
+.subtext {
+  color: #b9ecd4;
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 420px;
+  margin-bottom: 34px;
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.feature-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  border-radius: 12px;
+  padding: 16px 20px;
+  max-width: 450px;
+}
+
+.feature-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1eb980;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: #ffffff;
+  fill: none;
+  stroke-width: 2;
+}
+
+.feature-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.feature-desc {
+  font-size: 0.85rem;
+  color: #d6f2e3;
+}
+
+/* Panel kanan */
+.panel-right {
+  flex: 1;
+  background-color: #f5f7fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+}
+
+.form-wrapper {
+  width: 100%;
+  max-width: 480px;
+}
+
+h1.title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.lead {
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+
+.row-2 {
+  display: flex;
+  gap: 16px;
+}
+
+.row-2 .field {
+  flex: 1;
+}
+
+.login-hint {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #374151;
+  margin-top: 22px;
+}
+
+.login-hint a {
+  color: #0f7a4e;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.login-hint a:hover {
+  text-decoration: underline;
+}
+
+.fine-print {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .page {
+    flex-direction: column;
+  }
+  .panel-left {
+    flex: none;
+    min-height: 360px;
+  }
+  .panel-right {
+    padding: 40px 24px;
+  }
+  .row-2 {
+    flex-direction: column;
+    gap: 0;
+  }
+}

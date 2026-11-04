@@ -12,6 +12,21 @@ use Illuminate\View\View;
 
 class AuthController extends Controller
 {
+        /**
+     * Tampilkan halaman welcome (landing page).
+     */
+    public function welcome()
+    {
+        return view('welcome');
+    }
+
+    /**
+     * Tampilkan halaman registrasi.
+     */
+    public function showRegistrasiForm()
+    {
+        return view('registrasi');
+    }
     /**
      * Tampilkan halaman login.
      */
