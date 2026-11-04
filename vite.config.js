@@ -24,6 +24,8 @@ export default defineConfig({
                 'resources/js/jadwal_pengangkutan_dinas.js',
                 'resources/css/detail_tugas_petugas.css',
                 'resources/js/detail_tugas_petugas.js',
+                'resources/css/beranda_petugas.css',
+                'resources/js/beranda_petugas.js',
             ],
             refresh: true,
             fonts: [

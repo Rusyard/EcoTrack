@@ -32,7 +32,20 @@ class TugasController extends Controller
         $tugasHariIni = $tugasAktif->filter(fn (JadwalPengangkutan $j) => $j->tanggal->isToday())->values();
         $tugasBesok = $tugasAktif->filter(fn (JadwalPengangkutan $j) => $j->tanggal->isTomorrow())->values();
 
+        $pengguna = $request->user();
+
         return view('beranda_petugas', [
+            'judul'          => 'EcoTrack - Portal Petugas',
+            'namaLengkap'    => $pengguna->nama_lengkap,
+            'namaDepan'      => explode(' ', $pengguna->nama_lengkap)[0],
+            'inisial'        => strtoupper(substr($pengguna->nama_lengkap, 0, 1)),
+            'nip'            => $pengguna->nip,
+            'wilayahTugas'   => $pengguna->wilayah_tugas,
+            'tanggal'        => 'Senin, 01 Juni 2026',
+            'statusLabelPetugas' => [
+                'terjadwal' => ['kelas' => 'status-belum', 'label' => 'Belum Diangkut'],
+                'berjalan'  => ['kelas' => 'status-proses', 'label' => 'Sedang Diproses'],
+            ],
             'tugasHariIni'   => $tugasHariIni,
             'tugasBesok'     => $tugasBesok,
             'jumlahSelesai'  => JadwalPengangkutan::where('petugas_id', $petugasId)->where('status', 'selesai')->count(),
