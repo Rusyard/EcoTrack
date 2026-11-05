@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ShuttleController;
+use App\Http\Controllers\LaporanController;
+
+Route::get('/export-pdf', [LaporanController::class, 'exportPdf'])->name('export.pdf');
 
 Route::resource('shuttles', ShuttleController::class);
 

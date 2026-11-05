@@ -1,0 +1,1 @@
+<a href="{{ route('export.pdf') }}" class="btn">Unduh Laporan PDF</a>

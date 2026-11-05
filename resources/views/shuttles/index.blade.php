@@ -52,6 +52,10 @@
             </tr>
             @endforelse
         </tbody>
+
+        <a href="{{ route('export.pdf') }}" class="btn">Unduh Laporan PDF</a>
     </table>
+
+    
 </body>
 </html>
