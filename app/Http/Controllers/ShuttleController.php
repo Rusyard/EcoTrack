@@ -34,9 +34,9 @@ class ShuttleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_armada' => 'required|string|max:50',
-            'kapasitas' => 'required|numeric|min:10|max:60',
-            'rute_operasional' => 'required|string'
+            'nama_armada' => 'required|string|max:50',          //wajib diisi, harus berupa string, maksimal 50 karakter
+            'kapasitas' => 'required|numeric|min:10|max:60',    //wajib diisi, harus berupa angka, minimal 10 dan maksimal 60
+            'rute_operasional' => 'required|string'             //wajib diisi, harus berupa string
         ]);
 
         Shuttle::create($request->all());
