@@ -54,7 +54,6 @@
             <th>Tanggal &amp; Waktu</th>
             <th>Lokasi TPS</th>
             <th>Petugas</th>
-            <th>Kendaraan</th>
             <th>Status</th>
             <th>Tindakan</th>
           </tr>

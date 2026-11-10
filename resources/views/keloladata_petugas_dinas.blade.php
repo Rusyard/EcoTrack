@@ -62,7 +62,6 @@
             <th>NIP</th>
             <th>Wilayah Tugas</th>
             <th>Kontak</th>
-            <th>Kendaraan</th>
             <th>Status</th>
             <th>Tindakan</th>
           </tr>
@@ -72,7 +71,7 @@
             @include('partials.baris_petugas_dinas', ['p' => $p])
           @empty
             <tr>
-              <td colspan="7" style="text-align: center; padding: 28px; color: #6b7280;">
+              <td colspan="6" style="text-align: center; padding: 28px; color: #6b7280;">
                 Belum ada data petugas.
               </td>
             </tr>

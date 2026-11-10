@@ -361,11 +361,6 @@
     white-space: nowrap;
   }
 
-  .kendaraan-cell {
-    color: #6b7280;
-    white-space: nowrap;
-  }
-
   .status-pill {
     display: inline-flex;
     align-items: center;

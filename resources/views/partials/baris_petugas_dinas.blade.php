@@ -14,9 +14,6 @@
   <td class="nip-cell">{{ $p->nip }}</td>
   <td class="wilayah-cell">{{ $p->wilayah_tugas ?? '-' }}</td>
   <td class="kontak-cell">{{ $p->kontak ?? '-' }}</td>
-  {{-- Kendaraan ditentukan per-jadwal (tabel jadwal_pengangkutan), bukan
-       melekat ke petugas, jadi belum ada kendaraan tetap yang ditampilkan di sini. --}}
-  <td class="kendaraan-cell">-</td>
   <td><span class="status-pill status-{{ $p->status }}">{{ $labelStatus[$p->status] ?? ucwords(str_replace('_', ' ', $p->status)) }}</span></td>
   <td><a href="#" class="detail-link">Detail ›</a></td>
 </tr>
