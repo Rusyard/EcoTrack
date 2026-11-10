@@ -27,14 +27,13 @@ trait DataSidebarDinas
     }
 
     /**
-     * Data chip di topbar halaman dinas (tanggal & jumlah TPS kritis).
+     * Data chip di topbar halaman dinas (tanggal).
      * Masih data contoh seperti tampilan awal.
      */
     protected function dataTopbarDinas(): array
     {
         return [
-            'tanggal'         => 'Senin, 01 Juni 2026',
-            'jumlahTpsKritis' => 2,
+            'tanggal' => 'Senin, 01 Juni 2026',
         ];
     }
 }
