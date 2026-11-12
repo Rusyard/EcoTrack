@@ -3,63 +3,101 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-<<<<<<< HEAD
-=======
-use Illuminate\Http\Request;
->>>>>>> cfe9dc65b0322ecc48d1fde2aabb33cc07e2fbb5
 use App\Models\Shuttle;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ShuttleApiController extends Controller
 {
-    /**
-     * Menampilkan seluruh data (Get All)
-     */
     public function index()
     {
         $data = Shuttle::all();
-<<<<<<< HEAD
 
         return response()->json([
             'message' => 'Berhasil mengambil semua data',
             'data'    => $data
-=======
-        
-        return response()->json([
-            'message' => 'Berhasil mengambil semua data',
-            'data' => $data
->>>>>>> cfe9dc65b0322ecc48d1fde2aabb33cc07e2fbb5
         ], 200);
     }
 
-    /**
-     * Menampilkan data spesifik berdasarkan ID (Get By ID)
-     */
     public function show($id)
     {
         $data = Shuttle::find($id);
 
-        // Validasi jika data tidak ditemukan (Status 404)
         if (!$data) {
             return response()->json([
                 'message' => 'Data tidak ditemukan',
-<<<<<<< HEAD
                 'data'    => null
-=======
-                'data' => null
->>>>>>> cfe9dc65b0322ecc48d1fde2aabb33cc07e2fbb5
             ], 404);
         }
 
         return response()->json([
             'message' => 'Detail data ditemukan',
-<<<<<<< HEAD
             'data'    => $data
         ], 200);
     }
-}
-=======
-            'data' => $data
+
+    public function store(Request $request)
+    {
+        if ($request->bearerToken() !== 'TOKEN-RAHASIA-123') {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'nama_armada'      => 'required|string|max:255',
+            'kapasitas'        => 'required|integer|min:1',
+            'rute_operasional' => 'required|string|max:255',
+            'status_aktif'     => 'required|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validasi gagal',
+                'errors'  => $validator->errors()
+            ], 422);
+        }
+
+        $shuttle = Shuttle::create($validator->validated());
+
+        return response()->json([
+            'message' => 'Data berhasil ditambahkan',
+            'data'    => $shuttle
+        ], 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        if ($request->bearerToken() !== 'TOKEN-RAHASIA-123') {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $shuttle = Shuttle::find($id);
+
+        if (!$shuttle) {
+            return response()->json([
+                'message' => 'Data tidak ditemukan',
+                'data'    => null
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'nama_armada'      => 'required|string|max:255',
+            'kapasitas'        => 'required|integer|min:1',
+            'rute_operasional' => 'required|string|max:255',
+            'status_aktif'     => 'required|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validasi gagal',
+                'errors'  => $validator->errors()
+            ], 422);
+        }
+
+        $shuttle->update($validator->validated());
+
+        return response()->json([
+            'message' => 'Data berhasil diperbarui',
+            'data'    => $shuttle
         ], 200);
     }
 }
->>>>>>> cfe9dc65b0322ecc48d1fde2aabb33cc07e2fbb5
