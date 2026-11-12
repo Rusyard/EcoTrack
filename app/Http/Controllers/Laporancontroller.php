@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\JadwalPengangkutan;
-use App\Models\Kendaraan;
 use App\Models\Laporan;
 use App\Models\Tps;
 use App\Models\User;
@@ -200,17 +199,6 @@ class LaporanController extends Controller
             ]);
         }
 
-        // Kendaraan dipilih otomatis (yang pertama "tersedia") karena
-        // modal ini sengaja tidak menampilkan pilihan kendaraan ke dinas —
-        // biar alurnya sesimpel mockup-nya. Kalau tidak ada yang kosong,
-        // dinas diminta tunggu ada kendaraan yang available dulu.
-        $kendaraan = Kendaraan::where('status', 'tersedia')->first();
-        if (! $kendaraan) {
-            throw ValidationException::withMessages([
-                'petugas_id' => 'Semua kendaraan sedang digunakan/perbaikan, belum bisa menjadwalkan dulu.',
-            ]);
-        }
-
         for ($percobaan = 1; $percobaan <= 3; $percobaan++) {
             try {
                 JadwalPengangkutan::create([
@@ -218,7 +206,6 @@ class LaporanController extends Controller
                     'laporan_id'   => $laporan->id,
                     'tps_id'       => $laporan->tps_id,
                     'petugas_id'   => $petugas->id,
-                    'kendaraan_id' => $kendaraan->id,
                     'tanggal'      => $validated['tanggal'],
                     'waktu'        => $validated['waktu'],
                     'status'       => 'terjadwal',
@@ -232,7 +219,6 @@ class LaporanController extends Controller
             }
         }
 
-        $kendaraan->update(['status' => 'digunakan']);
         $laporan->update(['status' => 'dijadwalkan']);
 
         return redirect()

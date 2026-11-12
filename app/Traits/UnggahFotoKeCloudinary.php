@@ -35,9 +35,7 @@ trait UnggahFotoKeCloudinary
 
         $timestamp = time();
 
-        // Signature Cloudinary: semua parameter SELAIN file, api_key, dan
-        // signature, diurutkan alfabetis sebagai key=value&key=value,
-        // ditempel api_secret di akhir, lalu di-SHA1.
+    
         $stringUntukDitandatangani = "folder={$folder}&timestamp={$timestamp}{$apiSecret}";
         $signature = sha1($stringUntukDitandatangani);
 
