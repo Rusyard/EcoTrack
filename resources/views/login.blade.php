@@ -1,25 +1,20 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EcoTrack - Login</title>
-<link rel="stylesheet" href="{{ asset('css/login.css') }}">
-</head>
-<body>
+@extends('layout.app')
 
+@section('title', $judul)
+@section('css', 'resources/css/login.css')
+@section('js', 'resources/js/login.js')
+
+@section('content')
   <div class="login-wrapper">
-    <div class="logo-icon">
-      <!-- ikon daun -->
-      <svg viewBox="0 0 24 24">
-        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
-      </svg>
-    </div>
-
-    <h1 class="brand">EcoTrack</h1>
-    <p class="tagline">Manajemen keberlanjutan dan efisiensi limbah terpadu</p>
+    @include('partials.brand_login', ['brand' => $brand, 'tagline' => $tagline])
 
     <div class="login-card">
+      @if (session('success'))
+        <div style="background:#dcfce7; color:#166534; padding:12px 16px; border-radius:8px; margin-bottom:20px; font-size:0.88rem; font-weight:600;">
+          {{ session('success') }}
+        </div>
+      @endif
+
       <form id="loginForm" method="POST" action="{{ route('login.post') }}">
         @csrf
         <div class="field">
@@ -39,7 +34,7 @@
         <div class="field">
           <div class="field-header">
             <label for="password">Kata Sandi</label>
-            <a href="#" class="forgot-link">Lupa Password?</a>
+            <a href="{{ route('password.request') }}" class="forgot-link">Lupa Password?</a>
           </div>
           <div class="input-group">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -50,10 +45,6 @@
           </div>
         </div>
 
-        <div class="remember-row">
-          <input type="checkbox" id="remember" name="remember">
-          <label for="remember">Ingat Saya</label>
-        </div>
 
         @error('identifier')
           <div class="error-text" style="display: block;">{{ $message }}</div>
@@ -84,8 +75,4 @@
       </form>
     </div>
   </div>
-
-  <script src="{{ asset('js/login.js') }}"></script>
-
-</body>
-</html>
+@endsection
