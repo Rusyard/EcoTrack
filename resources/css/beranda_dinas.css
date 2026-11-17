@@ -1,0 +1,216 @@
+@import './dinas.css';
+
+  /* STAT CARDS */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+
+  .stat-card.danger {
+    border-color: #fecaca;
+    background: #fffafa;
+  }
+
+  .stat-value {
+    font-size: 1.7rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .stat-value.green { color: #16a34a; }
+  .stat-value.blue { color: #2563eb; }
+  .stat-value.orange { color: #ea580c; }
+  .stat-value.red { color: #dc2626; }
+
+  .stat-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 2px;
+  }
+
+  .stat-sub {
+    font-size: 0.78rem;
+    color: #9ca3af;
+  }
+
+  /* GRID PANELS */
+  .panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .panel {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px 22px;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .panel-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .panel-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.78rem;
+    color: #16a34a;
+    font-weight: 700;
+  }
+
+  .panel-badge svg {
+    width: 13px;
+    height: 13px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2.5;
+  }
+
+  .panel-link {
+    font-size: 0.8rem;
+    color: #0f7a4e;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .panel-link:hover {
+    text-decoration: underline;
+  }
+
+  /* BAR CHART */
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    height: 170px;
+    padding-top: 10px;
+  }
+
+  .bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+  }
+
+  .bar {
+    width: 100%;
+    max-width: 28px;
+    background: #1eb980;
+    border-radius: 5px 5px 0 0;
+  }
+
+  .bar-label {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: 8px;
+  }
+
+  /* MAP */
+  .map-area {
+    position: relative;
+    height: 230px;
+    border-radius: 10px;
+    overflow: hidden;
+    background:
+      linear-gradient(#dce8de 1px, transparent 1px),
+      linear-gradient(90deg, #dce8de 1px, transparent 1px),
+      #e9f2ea;
+    background-size: 32px 32px;
+  }
+
+  .map-road {
+    position: absolute;
+    background: #ffffff;
+  }
+
+  .map-district {
+    position: absolute;
+    font-size: 0.68rem;
+    color: #9ab6a2;
+    font-weight: 600;
+  }
+
+  .map-dot {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .map-dot.aman { background: #16a34a; box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.18); }
+  .map-dot.sedang { background: #ea580c; box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.18); }
+  .map-dot.kritis { background: #dc2626; box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.18); }
+
+  .map-dot.pulse::after {
+    content: "";
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    border: 2px solid #dc2626;
+    opacity: 0.5;
+    animation: pulse 1.8s ease-out infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(0.6); opacity: 0.6; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  .map-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+
+  .legend-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+
+  .legend-dot.aman { background: #16a34a; }
+  .legend-dot.sedang { background: #ea580c; }
+  .legend-dot.kritis { background: #dc2626; }
+
+@media (max-width: 1000px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .panel-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+  .stat-grid { grid-template-columns: 1fr; }
+}

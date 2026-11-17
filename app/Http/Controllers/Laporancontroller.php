@@ -6,6 +6,7 @@ use App\Models\JadwalPengangkutan;
 use App\Models\Laporan;
 use App\Models\Tps;
 use App\Models\User;
+use App\Traits\DataSidebarDinas;
 use App\Traits\UnggahFotoKeCloudinary;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
@@ -15,7 +16,7 @@ use Illuminate\View\View;
 
 class LaporanController extends Controller
 {
-    use UnggahFotoKeCloudinary;
+    use UnggahFotoKeCloudinary, DataSidebarDinas;
 
     /**
      * Beranda masyarakat: ringkasan jumlah laporan (total/proses/selesai)
@@ -30,11 +31,34 @@ class LaporanController extends Controller
             ->get();
 
         return view('beranda_masyarakat', [
+            'judul'           => 'EcoTrack - Dashboard',
             'laporanSaya'     => $laporanSaya,
             'totalLaporan'    => $laporanSaya->count(),
             'sedangDiproses'  => $laporanSaya->where('status', 'dijadwalkan')->count(),
             'selesaiDiangkut' => $laporanSaya->where('status', 'selesai')->count(),
-        ]);
+            // Kelas CSS + label status laporan untuk tabel histori
+            // (sebelumnya dipetakan langsung di Blade lewat @php).
+            'daftarStatus'    => [
+                'menunggu'    => ['kelas' => 'status-menunggu', 'label' => 'Menunggu Validasi'],
+                'dijadwalkan' => ['kelas' => 'status-proses',   'label' => 'Proses Pengangkutan'],
+                'selesai'     => ['kelas' => 'status-selesai',  'label' => 'Selesai'],
+            ],
+        ] + $this->dataPengguna($request));
+    }
+
+    /**
+     * Data pengguna yang sedang login untuk navbar & sapaan di halaman
+     * masyarakat (sebelumnya dipanggil langsung lewat Auth::user() di Blade).
+     */
+    private function dataPengguna(Request $request): array
+    {
+        $nama = $request->user()->nama_lengkap;
+
+        return [
+            'namaLengkap' => $nama,
+            'namaDepan'   => explode(' ', $nama)[0],
+            'inisial'     => strtoupper(substr($nama, 0, 1)),
+        ];
     }
 
     /**
@@ -45,7 +69,9 @@ class LaporanController extends Controller
     public function create(): View
     {
         return view('form_laporan', [
-            'daftarTps' => Tps::orderBy('nama_tps')->get(),
+            'judul'      => 'EcoTrack - Formulir Pelaporan Kondisi TPS',
+            'urlKembali' => route('beranda.masyarakat'),
+            'daftarTps'  => Tps::orderBy('nama_tps')->get(),
         ]);
     }
 
@@ -115,13 +141,14 @@ class LaporanController extends Controller
      * Halaman "Laporan Masuk" dinas: daftar semua laporan masyarakat
      * beserta foto yang diunggah (sebelumnya tabel ini statis/hardcode).
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         $laporan = Laporan::with(['tps', 'pelapor'])
             ->latest('tanggal_lapor')
             ->get();
 
         return view('laporan_masuk_dinas', [
+            'judul'         => 'EcoTrack - Kelola Laporan Masyarakat',
             'laporan'       => $laporan,
             // Dipakai buat dropdown "Petugas yang Ditugaskan" di modal
             // Jadwalkan. Petugas yang cuti/nonaktif sengaja tidak
@@ -131,7 +158,7 @@ class LaporanController extends Controller
                 ->whereIn('status', ['aktif', 'bertugas'])
                 ->orderBy('nama_lengkap')
                 ->get(),
-        ]);
+        ] + $this->dataSidebarDinas($request, 'laporan', null) + $this->dataTopbarDinas());
     }
 
     /**

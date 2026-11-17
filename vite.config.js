@@ -6,7 +6,27 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.js',
+                'resources/css/login.css',
+                'resources/js/login.js',
+                'resources/css/registrasi.css',
+                'resources/css/beranda_masyarakat.css',
+                'resources/css/form_laporan.css',
+                'resources/js/form_laporan.js',
+                'resources/css/beranda_dinas.css',
+                'resources/css/laporan_masuk_dinas.css',
+                'resources/js/laporan_masuk_dinas.js',
+                'resources/css/keloladata_petugas_dinas.css',
+                'resources/js/keloladata_petugas_dinas.js',
+                'resources/css/jadwal_pengangkutan_dinas.css',
+                'resources/js/jadwal_pengangkutan_dinas.js',
+                'resources/css/detail_tugas_petugas.css',
+                'resources/js/detail_tugas_petugas.js',
+                'resources/css/beranda_petugas.css',
+                'resources/js/beranda_petugas.js',
+            ],
             refresh: true,
             fonts: [
                 bunny('Instrument Sans', {

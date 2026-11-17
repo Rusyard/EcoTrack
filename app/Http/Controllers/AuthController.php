@@ -19,7 +19,11 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
-        return view('login');
+        return view('login', [
+            'judul'   => 'EcoTrack - Login',
+            'brand'   => 'EcoTrack',
+            'tagline' => 'Manajemen keberlanjutan dan efisiensi limbah terpadu',
+        ]);
     }
 
     /**
@@ -83,7 +87,9 @@ class AuthController extends Controller
      */
     public function showRegisterForm()
     {
-        return view('registrasi');
+        return view('registrasi', [
+            'judul' => 'EcoTrack - Buat Akun Baru',
+        ]);
     }
 
     /**

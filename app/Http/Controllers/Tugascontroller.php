@@ -32,7 +32,20 @@ class TugasController extends Controller
         $tugasHariIni = $tugasAktif->filter(fn (JadwalPengangkutan $j) => $j->tanggal->isToday())->values();
         $tugasBesok = $tugasAktif->filter(fn (JadwalPengangkutan $j) => $j->tanggal->isTomorrow())->values();
 
+        $pengguna = $request->user();
+
         return view('beranda_petugas', [
+            'judul'          => 'EcoTrack - Portal Petugas',
+            'namaLengkap'    => $pengguna->nama_lengkap,
+            'namaDepan'      => explode(' ', $pengguna->nama_lengkap)[0],
+            'inisial'        => strtoupper(substr($pengguna->nama_lengkap, 0, 1)),
+            'nip'            => $pengguna->nip,
+            'wilayahTugas'   => $pengguna->wilayah_tugas,
+            'tanggal'        => 'Senin, 01 Juni 2026',
+            'statusLabelPetugas' => [
+                'terjadwal' => ['kelas' => 'status-belum', 'label' => 'Belum Diangkut'],
+                'berjalan'  => ['kelas' => 'status-proses', 'label' => 'Sedang Diproses'],
+            ],
             'tugasHariIni'   => $tugasHariIni,
             'tugasBesok'     => $tugasBesok,
             'jumlahSelesai'  => JadwalPengangkutan::where('petugas_id', $petugasId)->where('status', 'selesai')->count(),
@@ -51,8 +64,26 @@ class TugasController extends Controller
 
         $jadwal->load(['tps', 'laporan']);
 
+        $tps = $jadwal->tps;
+        $laporan = $jadwal->laporan;
+
+        $statusLabel = [
+            'terjadwal'  => 'Belum Diangkut',
+            'berjalan'   => 'Sedang Diproses',
+            'selesai'    => 'Selesai Diangkut',
+            'dibatalkan' => 'Dibatalkan',
+        ][$jadwal->status];
+
         return view('detail_tugas_petugas', [
-            'jadwal' => $jadwal,
+            'judul'       => 'EcoTrack - Detail Tugas Pengangkutan',
+            'jadwal'      => $jadwal,
+            'tps'         => $tps,
+            'laporan'     => $laporan,
+            'mendesak'    => $laporan && $laporan->prioritas === 'mendesak',
+            'kapasitas'   => $tps->kapasitas_kg > 0
+                ? min(100, (int) round($tps->volume_saat_ini / $tps->kapasitas_kg * 100))
+                : 0,
+            'statusLabel' => $statusLabel,
         ]);
     }
 
