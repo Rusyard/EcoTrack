@@ -579,31 +579,33 @@
       <div class="topbar-right">
         <div class="date-chip">
           <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-          Senin, 01 Juni 2026
+          {{ now()->locale('id')->translatedFormat('l, d F Y') }}
         </div>
+        @if ($tpsKritis > 0)
         <div class="alert-chip">
           <svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
-          2 TPS Kritis
+          {{ $tpsKritis }} TPS Kritis
         </div>
+        @endif
       </div>
     </div>
 
     <!-- STAT CARDS -->
     <div class="stat-grid">
       <div class="stat-card">
-        <div class="stat-value blue">5</div>
+        <div class="stat-value blue">{{ $jadwalHariIni }}</div>
         <div class="stat-title">Jadwal Hari Ini</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value orange">1</div>
+        <div class="stat-value orange">{{ $berjalan }}</div>
         <div class="stat-title">Sedang Berjalan</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value green">3</div>
+        <div class="stat-value green">{{ $selesai }}</div>
         <div class="stat-title">Selesai</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value gray">1</div>
+        <div class="stat-value gray">{{ $dibatalkan }}</div>
         <div class="stat-title">Dibatalkan</div>
       </div>
     </div>
@@ -635,66 +637,43 @@
             <th>Tanggal &amp; Waktu</th>
             <th>Lokasi TPS</th>
             <th>Petugas</th>
-            <th>Kendaraan</th>
             <th>Status</th>
             <th>Tindakan</th>
           </tr>
         </thead>
         <tbody id="scheduleTableBody">
-          <tr data-status="berjalan" data-search="jdw001 tps taman kota agus widodo">
-            <td class="id-cell">JDW001</td>
-            <td class="datetime-cell">01 Jun 2026<span class="time">09:00</span></td>
-            <td class="lokasi-cell">TPS Taman Kota</td>
-            <td class="petugas-cell"><span class="petugas-avatar">A</span>Agus Widodo</td>
-            <td class="kendaraan-cell">Truk B 9012 KA</td>
-            <td><span class="status-pill status-berjalan">Sedang Berjalan</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
-          <tr data-status="terjadwal" data-search="jdw002 tps nambangan agus widodo">
-            <td class="id-cell">JDW002</td>
-            <td class="datetime-cell">01 Jun 2026<span class="time">11:00</span></td>
-            <td class="lokasi-cell">TPS Nambangan</td>
-            <td class="petugas-cell"><span class="petugas-avatar">A</span>Agus Widodo</td>
-            <td class="kendaraan-cell">Truk B 9012 KA</td>
-            <td><span class="status-pill status-terjadwal">Terjadwal</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
-          <tr data-status="terjadwal" data-search="jdw003 tps oro-oro ombo dedi kurniawan">
-            <td class="id-cell">JDW003</td>
-            <td class="datetime-cell">01 Jun 2026<span class="time">13:30</span></td>
-            <td class="lokasi-cell">TPS Oro-Oro Ombo</td>
-            <td class="petugas-cell"><span class="petugas-avatar">D</span>Dedi Kurniawan</td>
-            <td class="kendaraan-cell">Truk B 4471 AB</td>
-            <td><span class="status-pill status-terjadwal">Terjadwal</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
-          <tr data-status="selesai" data-search="jdw004 tps pasar besar dedi kurniawan">
-            <td class="id-cell">JDW004</td>
-            <td class="datetime-cell">31 Mei 2026<span class="time">08:00</span></td>
-            <td class="lokasi-cell">TPS Pasar Besar</td>
-            <td class="petugas-cell"><span class="petugas-avatar">D</span>Dedi Kurniawan</td>
-            <td class="kendaraan-cell">Truk B 4471 AB</td>
-            <td><span class="status-pill status-selesai">Selesai</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
-          <tr data-status="selesai" data-search="jdw005 tps pandean rina wulandari">
-            <td class="id-cell">JDW005</td>
-            <td class="datetime-cell">31 Mei 2026<span class="time">10:15</span></td>
-            <td class="lokasi-cell">TPS Pandean</td>
-            <td class="petugas-cell"><span class="petugas-avatar">R</span>Rina Wulandari</td>
-            <td class="kendaraan-cell">Truk B 7723 CD</td>
-            <td><span class="status-pill status-selesai">Selesai</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
-          <tr data-status="batal" data-search="jdw006 tps kejuron rina wulandari">
-            <td class="id-cell">JDW006</td>
-            <td class="datetime-cell">30 Mei 2026<span class="time">14:00</span></td>
-            <td class="lokasi-cell">TPS Kejuron</td>
-            <td class="petugas-cell"><span class="petugas-avatar">R</span>Rina Wulandari</td>
-            <td class="kendaraan-cell">Truk B 7723 CD</td>
-            <td><span class="status-pill status-batal">Dibatalkan</span></td>
-            <td><a href="#" class="detail-link">Detail ›</a></td>
-          </tr>
+          @php
+            $statusJadwal = [
+                'terjadwal'  => ['kelas' => 'terjadwal', 'filter' => 'terjadwal', 'label' => 'Terjadwal'],
+                'berjalan'   => ['kelas' => 'berjalan',  'filter' => 'berjalan',  'label' => 'Sedang Berjalan'],
+                'selesai'    => ['kelas' => 'selesai',   'filter' => 'selesai',   'label' => 'Selesai'],
+                'dibatalkan' => ['kelas' => 'batal',     'filter' => 'batal',     'label' => 'Dibatalkan'],
+            ];
+          @endphp
+          @forelse ($jadwal as $j)
+            @php
+              $st = $statusJadwal[$j->status] ?? ['kelas' => 'batal', 'filter' => $j->status, 'label' => ucfirst($j->status)];
+              $namaPetugas = $j->petugas->nama_lengkap ?? '-';
+            @endphp
+            <tr data-status="{{ $st['filter'] }}" data-search="{{ \Illuminate\Support\Str::lower($j->kode_jadwal.' '.($j->tps->nama_tps ?? '').' '.$namaPetugas) }}">
+              <td class="id-cell">{{ $j->kode_jadwal }}</td>
+              <td class="datetime-cell">{{ $j->tanggal->locale('id')->translatedFormat('d M Y') }}<span class="time">{{ substr($j->waktu, 0, 5) }}</span></td>
+              <td class="lokasi-cell">{{ $j->tps->nama_tps ?? '-' }}</td>
+              <td class="petugas-cell"><span class="petugas-avatar">{{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($namaPetugas, 0, 1)) }}</span>{{ $namaPetugas }}</td>
+              <td><span class="status-pill status-{{ $st['kelas'] }}">{{ $st['label'] }}</span></td>
+              <td>
+                @if ($j->laporan)
+                  <a href="{{ route('laporan.validasi.show', $j->laporan) }}" class="detail-link">Detail ›</a>
+                @else
+                  <span style="color:#9ca3af;">-</span>
+                @endif
+              </td>
+            </tr>
+          @empty
+            <tr>
+              <td colspan="6" style="text-align:center; color:#9ca3af; padding:28px 20px;">Belum ada jadwal pengangkutan. Jadwalkan dulu dari halaman Laporan Masuk.</td>
+            </tr>
+          @endforelse
         </tbody>
       </table>
     </div>
@@ -706,7 +685,7 @@
 <script>
   const searchInput = document.getElementById('searchInput');
   const statusFilter = document.getElementById('statusFilter');
-  const rows = document.querySelectorAll('#scheduleTableBody tr');
+  const rows = document.querySelectorAll('#scheduleTableBody tr[data-status]');
 
   function applyFilters() {
     const query = searchInput.value.trim().toLowerCase();

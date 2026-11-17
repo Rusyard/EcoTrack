@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\JadwalPengangkutanController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\TugasController;
@@ -92,11 +93,11 @@ Route::middleware('auth')->group(function () {
         // "Jadwalkan" di tabel Laporan Masuk (laporan berstatus "menunggu").
         Route::post('/laporan-masuk-dinas/{laporan}/jadwalkan', [LaporanController::class, 'jadwalkan'])
             ->name('laporan.jadwalkan');
-    });
 
-    Route::get('/jadwal-pengangkutan-dinas', function () {
-        return view('jadwal_pengangkutan_dinas');
-    })->name('jadwal.pengangkutan.dinas');
+        // Daftar semua jadwal pengangkutan (hasil dari tombol "Jadwalkan").
+        Route::get('/jadwal-pengangkutan-dinas', [JadwalPengangkutanController::class, 'index'])
+            ->name('jadwal.pengangkutan.dinas');
+    });
 
     // Halaman ini menampilkan data pribadi petugas (NIP, kontak), dan
     // hanya dinas yang boleh menambah akun petugas baru, jadi GET & POST
