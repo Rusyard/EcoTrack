@@ -7,6 +7,8 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -40,6 +42,19 @@ class AuthController extends Controller
 
         $identifier = $request->input('identifier');
 
+        // Batasi percobaan login: gagal 3 kali berturut-turut, harus
+        // menunggu 1 menit. Kuncinya gabungan identifier + IP, jadi satu
+        // akun yang diserang tidak ikut mengunci orang lain dari IP berbeda.
+        $kunciBatas = 'login:'.Str::lower($identifier).'|'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($kunciBatas, 3)) { // 3 percobaan gagal berturut-turut
+            $detik = RateLimiter::availableIn($kunciBatas);
+
+            throw ValidationException::withMessages([
+                'identifier' => "Terlalu banyak percobaan login. Silakan coba lagi dalam {$detik} detik.",
+            ]);
+        }
+
         // Cari user berdasarkan username, email, ATAU nip — sesuai kolom
         // mana yang cocok, karena masyarakat pakai username/email
         // sedangkan petugas & dinas pakai NIP.
@@ -51,10 +66,15 @@ class AuthController extends Controller
         // Validasi manual (bukan Auth::attempt) karena field login-nya
         // bukan cuma 'email' seperti default Laravel, tapi bisa 3 jenis ID.
         if (! $user || ! \Illuminate\Support\Facades\Hash::check($request->input('password'), $user->password)) {
+            RateLimiter::hit($kunciBatas, 60); // hitungan reset otomatis setelah 60 detik
+
             throw ValidationException::withMessages([
                 'identifier' => 'Username, NIP, atau password yang Anda masukkan salah.',
             ]);
         }
+
+        // Login berhasil: hitungan gagal direset.
+        RateLimiter::clear($kunciBatas);
 
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
