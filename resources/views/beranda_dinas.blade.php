@@ -19,13 +19,6 @@
 @endsection
 
 @section('content')
-    <!-- STAT CARDS -->
-    <div class="stat-grid">
-      @foreach ($statistik as $s)
-        @include('partials.stat_card_dinas', ['s' => $s])
-      @endforeach
-    </div>
-
     <!-- PANELS -->
     <div class="panel-grid">
       <div class="panel">
