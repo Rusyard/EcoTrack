@@ -47,7 +47,6 @@
       <div class="panel">
         <div class="panel-header">
           <div class="panel-title">Peta TPS — Kota Madiun</div>
-          <a href="#" class="panel-link">Lihat Laporan →</a>
         </div>
 
         <div class="map-area">
