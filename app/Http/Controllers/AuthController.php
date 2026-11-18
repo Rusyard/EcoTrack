@@ -48,11 +48,7 @@ class AuthController extends Controller
         $kunciBatas = 'login:'.Str::lower($identifier).'|'.$request->ip();
 
         if (RateLimiter::tooManyAttempts($kunciBatas, 3)) { // 3 percobaan gagal berturut-turut
-            $detik = RateLimiter::availableIn($kunciBatas);
-
-            throw ValidationException::withMessages([
-                'identifier' => "Terlalu banyak percobaan login. Silakan coba lagi dalam {$detik} detik.",
-            ]);
+            return $this->responTerkunci($request, RateLimiter::availableIn($kunciBatas));
         }
 
         // Cari user berdasarkan username, email, ATAU nip — sesuai kolom
@@ -68,6 +64,12 @@ class AuthController extends Controller
         if (! $user || ! \Illuminate\Support\Facades\Hash::check($request->input('password'), $user->password)) {
             RateLimiter::hit($kunciBatas, 60); // hitungan reset otomatis setelah 60 detik
 
+            // Percobaan gagal ke-3: langsung kunci dan tampilkan countdown,
+            // jangan tunggu sampai percobaan ke-4.
+            if (RateLimiter::tooManyAttempts($kunciBatas, 3)) {
+                return $this->responTerkunci($request, RateLimiter::availableIn($kunciBatas));
+            }
+
             throw ValidationException::withMessages([
                 'identifier' => 'Username, NIP, atau password yang Anda masukkan salah.',
             ]);
@@ -80,6 +82,18 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         return $this->redirectByRole($user);
+    }
+
+    /**
+     * Kembali ke form login dengan sisa waktu tunggu (detik). Angka ini
+     * dibaca view buat countdown di halaman; penguncian aslinya tetap
+     * dipaksa server lewat RateLimiter, bukan oleh JavaScript.
+     */
+    private function responTerkunci(Request $request, int $detik): RedirectResponse
+    {
+        return back()
+            ->withInput($request->only('identifier'))
+            ->with('sisa_detik', max($detik, 1));
     }
 
     /**

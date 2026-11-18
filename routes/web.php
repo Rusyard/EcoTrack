@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DinasController;
 use App\Http\Controllers\JadwalPengangkutanController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PetugasController;
@@ -106,5 +107,12 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/keloladata-petugas-dinas', [PetugasController::class, 'store'])
             ->name('keloladata.petugas.store');
+
+        // Edit & hapus petugas, dibuka dari modal "Detail" di tabel Data Petugas.
+        Route::put('/keloladata-petugas-dinas/{petugas}', [PetugasController::class, 'update'])
+            ->name('keloladata.petugas.update');
+
+        Route::delete('/keloladata-petugas-dinas/{petugas}', [PetugasController::class, 'destroy'])
+            ->name('keloladata.petugas.destroy');
     });
 });

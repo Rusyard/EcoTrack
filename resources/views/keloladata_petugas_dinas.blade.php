@@ -23,6 +23,9 @@
     @if (session('success'))
       <div class="alert alert-success">{{ session('success') }}</div>
     @endif
+    @if (session('error'))
+      <div class="alert alert-error">{{ session('error') }}</div>
+    @endif
 
     <!-- STAT CARDS -->
     <div class="stat-grid">
@@ -36,16 +39,6 @@
       <div class="search-box">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
         <input type="text" id="searchInput" placeholder="Cari berdasarkan nama atau NIP...">
-      </div>
-      <div class="status-select">
-        <select id="statusFilter">
-          <option value="semua">Semua Status</option>
-          <option value="aktif">Aktif</option>
-          <option value="bertugas">Sedang Bertugas</option>
-          <option value="cuti">Cuti</option>
-          <option value="nonaktif">Nonaktif</option>
-        </select>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
       </div>
       <button type="button" class="btn-new" onclick="bukaModalTambahPetugas()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
@@ -62,7 +55,6 @@
             <th>NIP</th>
             <th>Wilayah Tugas</th>
             <th>Kontak</th>
-            <th>Status</th>
             <th>Tindakan</th>
           </tr>
         </thead>
@@ -71,7 +63,7 @@
             @include('partials.baris_petugas_dinas', ['p' => $p])
           @empty
             <tr>
-              <td colspan="6" style="text-align: center; padding: 28px; color: #6b7280;">
+              <td colspan="5" style="text-align: center; padding: 28px; color: #6b7280;">
                 Belum ada data petugas.
               </td>
             </tr>
@@ -81,4 +73,5 @@
     </div>
 
     @include('partials.modal_tambah_petugas')
+    @include('partials.modal_detail_petugas')
 @endsection

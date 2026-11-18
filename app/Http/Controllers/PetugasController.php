@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JadwalPengangkutan;
 use App\Models\User;
 use App\Traits\DataSidebarDinas;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -28,17 +30,7 @@ class PetugasController extends Controller
             'judul'         => 'EcoTrack - Data Petugas',
             'petugas'       => $petugas,
             'statistik'     => [
-                ['warna' => 'blue',   'nilai' => $petugas->count(),                               'judul' => 'Total Petugas'],
-                ['warna' => 'green',  'nilai' => $petugas->where('status', 'bertugas')->count(),  'judul' => 'Sedang Bertugas'],
-                ['warna' => 'orange', 'nilai' => $petugas->where('status', 'cuti')->count(),      'judul' => 'Cuti'],
-                ['warna' => 'gray',   'nilai' => $petugas->where('status', 'nonaktif')->count(),  'judul' => 'Nonaktif'],
-            ],
-            // Label status yang tampil di tabel (sebelumnya dihitung di Blade).
-            'labelStatus'   => [
-                'aktif'    => 'Aktif',
-                'bertugas' => 'Sedang Bertugas',
-                'cuti'     => 'Cuti',
-                'nonaktif' => 'Nonaktif',
+                ['warna' => 'blue', 'nilai' => $petugas->count(), 'judul' => 'Total Petugas'],
             ],
             // Pilihan wilayah di modal "Tambah Petugas" (sebelumnya ditulis di Blade).
             'daftarWilayah' => ['Kartoharjo', 'Manguharjo', 'Taman'],
@@ -109,5 +101,95 @@ class PetugasController extends Controller
         return redirect()
             ->route('keloladata.petugas.dinas')
             ->with('success', 'Petugas baru berhasil ditambahkan.');
+    }
+
+    /**
+     * Ubah data petugas (nama, NIP, kontak, wilayah). Password hanya
+     * diganti kalau kolomnya diisi. Error validasi dikirim lewat bag
+     * "updatePetugas" supaya tidak tercampur dengan error form Tambah.
+     */
+    public function update(Request $request, User $petugas): RedirectResponse
+    {
+        abort_unless($petugas->role === 'petugas', 404);
+
+        $validated = $request->validateWithBag('updatePetugas', [
+            'nama_lengkap'  => ['bail', 'required', 'string', 'min:3', 'max:100'],
+            'nip'           => ['bail', 'required', 'digits_between:8,20', Rule::unique('users', 'nip')->ignore($petugas->id)],
+            'kontak'        => ['bail', 'required', 'string', 'max:20', 'regex:/^[0-9+\-\s]+$/'],
+            'wilayah_tugas' => ['bail', 'required', 'string', 'in:Kartoharjo,Manguharjo,Taman'],
+            'password'      => [
+                'bail', 'nullable', 'string', 'min:8', 'max:72', 'confirmed',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d).+$/',
+            ],
+        ], [
+            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'nama_lengkap.min'      => 'Nama lengkap minimal 3 karakter.',
+            'nama_lengkap.max'      => 'Nama lengkap maksimal 100 karakter.',
+
+            'nip.required'           => 'NIP wajib diisi.',
+            'nip.digits_between'     => 'NIP harus berupa angka, 8 sampai 20 digit.',
+            'nip.unique'             => 'NIP ini sudah dipakai petugas lain.',
+
+            'kontak.required'        => 'Nomor kontak wajib diisi.',
+            'kontak.max'             => 'Nomor kontak maksimal 20 karakter.',
+            'kontak.regex'           => 'Nomor kontak hanya boleh berisi angka, spasi, + dan -.',
+
+            'wilayah_tugas.required' => 'Wilayah tugas wajib dipilih.',
+            'wilayah_tugas.in'       => 'Wilayah tugas tidak valid.',
+
+            'password.min'           => 'Password minimal 8 karakter.',
+            'password.max'           => 'Password maksimal 72 karakter.',
+            'password.confirmed'     => 'Konfirmasi password tidak cocok.',
+            'password.regex'         => 'Password harus mengandung huruf dan angka.',
+        ]);
+
+        $data = [
+            'nama_lengkap'  => $validated['nama_lengkap'],
+            'nip'           => $validated['nip'],
+            'kontak'        => $validated['kontak'],
+            'wilayah_tugas' => $validated['wilayah_tugas'],
+        ];
+
+        // Jangan Hash::make() di sini: cast 'hashed' di model User sudah
+        // meng-hash otomatis.
+        if (! empty($validated['password'])) {
+            $data['password'] = $validated['password'];
+        }
+
+        try {
+            $petugas->update($data);
+        } catch (UniqueConstraintViolationException) {
+            throw ValidationException::withMessages([
+                'nip' => 'NIP ini sudah dipakai petugas lain.',
+            ])->errorBag('updatePetugas');
+        }
+
+        return redirect()
+            ->route('keloladata.petugas.dinas')
+            ->with('success', "Data petugas {$petugas->nama_lengkap} berhasil diperbarui.");
+    }
+
+    /**
+     * Hapus akun petugas. Petugas yang sudah pernah punya jadwal
+     * pengangkutan TIDAK boleh dihapus: relasi jadwal_pengangkutan ke
+     * users bersifat cascade, jadi menghapus petugas akan ikut menghapus
+     * seluruh riwayat jadwal (dan catatan petugas) miliknya.
+     */
+    public function destroy(User $petugas): RedirectResponse
+    {
+        abort_unless($petugas->role === 'petugas', 404);
+
+        if (JadwalPengangkutan::where('petugas_id', $petugas->id)->exists()) {
+            return redirect()
+                ->route('keloladata.petugas.dinas')
+                ->with('error', "Petugas {$petugas->nama_lengkap} tidak bisa dihapus karena sudah punya jadwal pengangkutan. Menghapusnya akan ikut menghapus riwayat jadwal.");
+        }
+
+        $nama = $petugas->nama_lengkap;
+        $petugas->delete();
+
+        return redirect()
+            ->route('keloladata.petugas.dinas')
+            ->with('success', "Petugas {$nama} berhasil dihapus.");
     }
 }

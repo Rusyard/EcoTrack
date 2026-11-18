@@ -27,3 +27,38 @@
       petugas: 'portal-petugas-ecotrack.html',
       dinas: 'admin-dashboard-ecotrack.html'
     };
+
+// ===== Countdown saat login dikunci (3x gagal) =====
+// Server yang menentukan sisa waktu (lihat AuthController::responTerkunci);
+// di sini cuma menampilkan hitung mundur dan membuka tombol lagi saat habis.
+(function () {
+  const lockBox = document.getElementById('lockBox');
+  if (!lockBox) return;
+
+  const lockTimer = document.getElementById('lockTimer');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginBtnLabel = document.getElementById('loginBtnLabel');
+  const labelAsli = loginBtnLabel.textContent;
+
+  // Pakai waktu berakhir (bukan decrement per detik) supaya tetap akurat
+  // walau tab sempat di-background dan timer browser melambat.
+  const berakhirPada = Date.now() + parseInt(lockBox.dataset.detik, 10) * 1000;
+
+  function tick() {
+    const sisa = Math.max(0, Math.ceil((berakhirPada - Date.now()) / 1000));
+
+    if (sisa > 0) {
+      lockTimer.textContent = sisa;
+      loginBtnLabel.textContent = 'Tunggu ' + sisa + ' detik';
+      return;
+    }
+
+    clearInterval(interval);
+    lockBox.style.display = 'none';
+    loginBtn.disabled = false;
+    loginBtnLabel.textContent = labelAsli;
+  }
+
+  const interval = setInterval(tick, 250);
+  tick();
+})();
