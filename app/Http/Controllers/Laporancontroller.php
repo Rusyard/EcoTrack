@@ -190,6 +190,19 @@ class LaporanController extends Controller
             'waktu.date_format'   => 'Format jam tidak valid.',
         ]);
 
+        // Jam pengangkutan tidak boleh sudah lewat. Aturan after_or_equal:today
+        // di atas hanya memeriksa tanggalnya, jadi jam yang sudah lewat di hari
+        // yang sama tadinya tetap lolos. Dicek terhadap waktu WIB karena jam
+        // diisi dinas sebagai jam setempat (timezone aplikasi masih UTC).
+        $zonaWaktu = 'Asia/Jakarta';
+        $waktuPengangkutan = \Illuminate\Support\Carbon::parse($validated['tanggal'].' '.$validated['waktu'], $zonaWaktu);
+
+        if ($waktuPengangkutan->lt(now($zonaWaktu)->startOfMinute())) {
+            throw ValidationException::withMessages([
+                'waktu' => 'Jam pengangkutan sudah lewat. Pilih jam yang belum lewat.',
+            ]);
+        }
+
         // Dipastikan yang dipilih beneran petugas (bukan masyarakat/dinas
         // yang id-nya ditebak lewat request manual).
         $petugas = User::where('id', $validated['petugas_id'])->where('role', 'petugas')->first();
