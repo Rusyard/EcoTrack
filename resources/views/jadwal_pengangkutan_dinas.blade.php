@@ -36,10 +36,6 @@
         <div class="stat-value green">{{ $selesai }}</div>
         <div class="stat-title">Selesai</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-value gray">{{ $dibatalkan }}</div>
-        <div class="stat-title">Dibatalkan</div>
-      </div>
     </div>
 
     <!-- FILTER -->

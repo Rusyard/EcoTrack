@@ -30,7 +30,6 @@ class JadwalPengangkutanController extends Controller
             'jadwalHariIni' => $jadwal->filter(fn ($j) => $j->tanggal->isToday())->count(),
             'berjalan'      => $jadwal->where('status', 'berjalan')->count(),
             'selesai'       => $jadwal->where('status', 'selesai')->count(),
-            'dibatalkan'    => $jadwal->where('status', 'dibatalkan')->count(),
             'tpsKritis'     => Tps::where('level_volume', 'kritis')->count(),
         ] + $this->dataSidebarDinas($request, 'jadwal'));
     }
