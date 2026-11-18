@@ -21,6 +21,7 @@ class JadwalPengangkutanController extends Controller
             ->get();
 
         return view('jadwal_pengangkutan_dinas', [
+            'judul'         => 'EcoTrack - Jadwal Pengangkutan',
             'jadwal'        => $jadwal,
             'jadwalHariIni' => $jadwal->filter(fn ($j) => $j->tanggal->isToday())->count(),
             'berjalan'      => $jadwal->where('status', 'berjalan')->count(),

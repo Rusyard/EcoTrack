@@ -71,9 +71,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // --- Dinas (Admin) ---
-    Route::get('/beranda-dinas', function () {
-        return view('beranda_dinas');
-    })->name('beranda.dinas');
+    Route::get('/beranda-dinas', [DinasController::class, 'beranda'])->name('beranda.dinas');
 
     // Halaman ini menampilkan data pribadi pelapor (nama) dan foto laporan,
     // jadi dibatasi dinas saja — sama seperti halaman Data Petugas.

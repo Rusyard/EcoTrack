@@ -1,6 +1,6 @@
 const searchInput = document.getElementById('searchInput');
 const statusFilter = document.getElementById('statusFilter');
-const rows = document.querySelectorAll('#scheduleTableBody tr');
+const rows = document.querySelectorAll('#scheduleTableBody tr[data-status]');
 
 function applyFilters() {
   const query = searchInput.value.trim().toLowerCase();
