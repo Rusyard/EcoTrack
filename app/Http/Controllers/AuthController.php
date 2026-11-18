@@ -19,11 +19,7 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
-        return view('login', [
-            'judul'   => 'EcoTrack - Login',
-            'brand'   => 'EcoTrack',
-            'tagline' => 'Manajemen keberlanjutan dan efisiensi limbah terpadu',
-        ]);
+        return view('login');
     }
 
     /**
@@ -47,7 +43,7 @@ class AuthController extends Controller
         // akun yang diserang tidak ikut mengunci orang lain dari IP berbeda.
         $kunciBatas = 'login:'.Str::lower($identifier).'|'.$request->ip();
 
-        if (RateLimiter::tooManyAttempts($kunciBatas, 3)) { // 3 percobaan gagal berturut-turut
+        if (RateLimiter::tooManyAttempts($kunciBatas, 3)) {
             $detik = RateLimiter::availableIn($kunciBatas);
 
             throw ValidationException::withMessages([
@@ -87,9 +83,7 @@ class AuthController extends Controller
      */
     public function showRegisterForm()
     {
-        return view('registrasi', [
-            'judul' => 'EcoTrack - Buat Akun Baru',
-        ]);
+        return view('registrasi');
     }
 
     /**
