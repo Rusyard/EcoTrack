@@ -16,6 +16,10 @@
           {{ now()->locale('id')->translatedFormat('l, d F Y') }}
         </div>
         @if ($tpsKritis > 0)
+        <div class="alert-chip">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
+          {{ $tpsKritis }} TPS Kritis
+        </div>
         @endif
       </div>
     </div>
@@ -36,10 +40,6 @@
         <div class="stat-value green">{{ $selesai }}</div>
         <div class="stat-title">Selesai</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-value gray">{{ $dibatalkan }}</div>
-        <div class="stat-title">Dibatalkan</div>
-      </div>
     </div>
 
     <!-- FILTER -->
@@ -54,7 +54,6 @@
           <option value="terjadwal">Terjadwal</option>
           <option value="berjalan">Sedang Berjalan</option>
           <option value="selesai">Selesai</option>
-          <option value="batal">Dibatalkan</option>
         </select>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
       </div>
@@ -79,7 +78,6 @@
                 'terjadwal'  => ['kelas' => 'terjadwal', 'filter' => 'terjadwal', 'label' => 'Terjadwal'],
                 'berjalan'   => ['kelas' => 'berjalan',  'filter' => 'berjalan',  'label' => 'Sedang Berjalan'],
                 'selesai'    => ['kelas' => 'selesai',   'filter' => 'selesai',   'label' => 'Selesai'],
-                'dibatalkan' => ['kelas' => 'batal',     'filter' => 'batal',     'label' => 'Dibatalkan'],
             ];
           @endphp
           @forelse ($jadwal as $j)

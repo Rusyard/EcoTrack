@@ -38,11 +38,6 @@ class JadwalPengangkutanSeeder extends Seeder
              'tanggal' => '2026-05-31', 'waktu' => '10:15:00', 'status' => 'selesai',
              'catatan' => null,
              'created_at' => $now, 'updated_at' => $now],
-
-            ['kode_jadwal' => 'JDW006', 'laporan_id' => null, 'tps_id' => 6, 'petugas_id' => 7,
-             'tanggal' => '2026-05-30', 'waktu' => '14:00:00', 'status' => 'dibatalkan',
-             'catatan' => 'Kendaraan mengalami gangguan teknis.',
-             'created_at' => $now, 'updated_at' => $now],
         ]);
     }
 }

@@ -272,13 +272,16 @@
         </div>
 
         <div class="foto-box">
-          @if ($laporan->foto_sesudah)
+          {{-- Foto sesudah baru boleh dilihat masyarakat setelah dinas memvalidasi
+               (status laporan "selesai"). Sebelum itu, walau petugas sudah
+               mengunggah foto, URL fotonya tidak ikut ditampilkan. --}}
+          @if ($laporan->foto_sesudah && $laporan->status === 'selesai')
             <img src="{{ $laporan->foto_sesudah }}" alt="Foto sesudah">
             <span class="foto-label">SESUDAH</span>
           @else
             <div class="foto-kosong sesudah">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              <span>Menunggu petugas menyelesaikan tugas</span>
+              <span>{{ $laporan->foto_sesudah ? 'Menunggu validasi dinas' : 'Menunggu petugas menyelesaikan tugas' }}</span>
             </div>
           @endif
         </div>
