@@ -59,11 +59,38 @@ const modalTargetAlamat = document.getElementById('modalTargetAlamat');
 // pada <form id="formJadwalkan">, karena file JS ini tidak diproses Blade.)
 const urlJadwalkanTemplate = formJadwalkan.dataset.urlTemplate;
 
+// Batas input jadwal: tanggal tidak boleh kemarin, dan kalau tanggalnya hari
+// ini maka jam tidak boleh sudah lewat. Ini hanya bantuan di browser; server
+// tetap memeriksa ulang di LaporanController::jadwalkan.
+const inputTanggalJadwal = document.getElementById('modalTanggal');
+const inputWaktuJadwal = document.getElementById('modalWaktu');
+
+function dua(angka) {
+  return String(angka).padStart(2, '0');
+}
+
+function aturBatasJadwal() {
+  const sekarang = new Date();
+  const hariIni = sekarang.getFullYear() + '-' + dua(sekarang.getMonth() + 1) + '-' + dua(sekarang.getDate());
+
+  inputTanggalJadwal.min = hariIni;
+
+  if (inputTanggalJadwal.value === hariIni) {
+    inputWaktuJadwal.min = dua(sekarang.getHours()) + ':' + dua(sekarang.getMinutes());
+  } else {
+    inputWaktuJadwal.removeAttribute('min');
+  }
+}
+
+inputTanggalJadwal.addEventListener('change', aturBatasJadwal);
+inputWaktuJadwal.addEventListener('focus', aturBatasJadwal);
+
 function bukaModalJadwalkan(laporanId, kodeLaporan, namaTps, alamatTps) {
   modalTargetNama.textContent = namaTps;
   modalTargetAlamat.textContent = alamatTps;
   formJadwalkan.action = urlJadwalkanTemplate.replace('/0/', '/' + laporanId + '/');
   formJadwalkan.reset();
+  aturBatasJadwal();
   modalJadwalkanOverlay.classList.add('is-open');
 }
 

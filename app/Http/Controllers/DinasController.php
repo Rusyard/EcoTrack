@@ -20,12 +20,6 @@ class DinasController extends Controller
         return view('beranda_dinas', [
             'judul'           => 'EcoTrack - Dashboard Monitoring',
             'kenaikanVolume'  => '+12% dari minggu lalu',
-            'statistik'       => [
-                ['warna' => 'green',  'nilai' => 6, 'judul' => 'Total TPS Aktif',  'keterangan' => 'Kota Madiun',     'bahaya' => false],
-                ['warna' => 'blue',   'nilai' => 3, 'judul' => 'Laporan Hari Ini', 'keterangan' => 'Masuk ke sistem', 'bahaya' => false],
-                ['warna' => 'orange', 'nilai' => 3, 'judul' => 'Petugas Aktif',    'keterangan' => 'Siap bertugas',   'bahaya' => false],
-                ['warna' => 'red',    'nilai' => 3, 'judul' => 'Butuh Tindakan',   'keterangan' => 'Segera diproses', 'bahaya' => true],
-            ],
             'volumeMingguan'  => [
                 ['hari' => 'Sen', 'tinggi' => 75],
                 ['hari' => 'Sel', 'tinggi' => 58],

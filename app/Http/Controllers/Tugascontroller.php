@@ -41,7 +41,9 @@ class TugasController extends Controller
             'inisial'        => strtoupper(substr($pengguna->nama_lengkap, 0, 1)),
             'nip'            => $pengguna->nip,
             'wilayahTugas'   => $pengguna->wilayah_tugas,
-            'tanggal'        => 'Senin, 01 Juni 2026',
+            // Tanggal hari ini menurut WIB (timezone aplikasi masih UTC, jadi
+            // tanpa Asia/Jakarta tanggalnya telat sampai pukul 07.00 pagi).
+            'tanggal'        => now('Asia/Jakarta')->locale('id')->translatedFormat('l, d F Y'),
             'statusLabelPetugas' => [
                 'terjadwal' => ['kelas' => 'status-belum', 'label' => 'Belum Diangkut'],
                 'berjalan'  => ['kelas' => 'status-proses', 'label' => 'Sedang Diproses'],
